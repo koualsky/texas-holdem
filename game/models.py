@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Later: count and verify 'max_length' fields in my models
 
@@ -7,13 +8,16 @@ class Player(models.Model):
     """Attributes and methods for 'Player'"""
 
     # Attributes
-    name = models.ForeignKey('auth.user', on_delete=models.CASCADE, default='Guest')
+    name = models.OneToOneField(User, on_delete=models.CASCADE, related_name='player', unique=True)
     money = models.IntegerField(default=100)
     cards = models.CharField(max_length=100)
     state = models.CharField(max_length=100, default="out")
     # (out, wait_for_start, start, check, call, raise, pass)
     # table = models.ForeignKey(Table, on_delete=models.CASCADE)
-    table = models.IntegerField()
+    table = models.IntegerField(null=True)
+
+    def __str__(self):
+        return str(self.name)
 
     # Assistant Methods
     def change_name(self):
@@ -58,7 +62,6 @@ class Player(models.Model):
         self.passs = 'passs'
 
 
-'''
 class Table(models.Model):  # Game
     """Attributes and methods for the Table"""
 
@@ -131,4 +134,3 @@ class Table(models.Model):  # Game
         # end_game()
         # start game again: zero()
         pass
-'''
