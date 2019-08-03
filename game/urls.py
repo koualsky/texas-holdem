@@ -1,6 +1,13 @@
-from django.urls import path
-
+from django.urls import path, include
+from . import views
 
 urlpatterns = [
-    # path('id_3212', views.game, name='game'),
+
+    # Game
+    path('', views.start, name='start'),
+    path('table/', views.play, name='play'),
+
+    # Authentication
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('register/', views.register, name='register'),
 ]

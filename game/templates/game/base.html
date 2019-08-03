@@ -1,0 +1,16 @@
+{% load static %}
+
+<nav>
+<a href="{% url 'start' %}">Start</a>
+
+{% if user.is_authenticated %}
+    Hello <strong>{{ user }}</strong>
+    <a href="{% url 'logout' %}">logout</a>
+{% else %}
+    <a href="{% url 'login' %}">login</a>
+    <a href="{% url 'register' %}">register</a>
+{% endif %}
+</nav>
+
+{% block content %}
+{% endblock %}
