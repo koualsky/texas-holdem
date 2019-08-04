@@ -2,6 +2,19 @@
 
 {% block content %}
 
-This is <strong>{{ table }}</strong> game
+<p>
+    {{ table.player1 }}
+    {{ table.player1.money }}
+</p>
+<p>
+    {{ table.player2 }}
+</p>
+<p>
+    {{ table.player3 }}
+</p>
+<p>
+    {{ table.player4 }}
+</p>
+
 
 {% endblock %}

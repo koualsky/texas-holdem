@@ -66,14 +66,32 @@ class Table(models.Model):  # Game
     """Attributes and methods for the Table"""
 
     # Attributes
-    players = models.CharField(max_length=500)
-    dealer = models.CharField(max_length=200)
+    player1 = models.CharField(max_length=200, null=True)
+    player2 = models.CharField(max_length=200, null=True)
+    player3 = models.CharField(max_length=300, null=True)
+    player4 = models.CharField(max_length=300, null=True)
+    dealer = models.CharField(max_length=200, null=True)
     pool = models.IntegerField(default=0)
-    deck = models.CharField(max_length=500)
-    cards_on_table = models.CharField(max_length=100)
+    deck = models.CharField(max_length=500, null=True)
+    cards_on_table = models.CharField(max_length=100, null=True)
     # path = models.CharField(max_length=200)  # ?????????????????????????????
 
+    def __str__(self):
+        return (
+            str(self.pk)
+            + ' - ('
+            + str(self.player1)
+            + ', '
+            + str(self.player2)
+            + ', '
+            + str(self.player3)
+            + ', '
+            + str(self.player4)
+            + ')'
+        )
+
     # Assistant Methods
+
     def how_many_players(self):
         """Count how many players is in the particular game"""
 
@@ -105,7 +123,7 @@ class Table(models.Model):  # Game
         # raise (you can raise pool)
         # pass (change your status to 'pass' - you don't allow to make changes in this game)
 
-        # timer - if you dont make a decission in 10 sek. you automatically get status: 'ingame'
+        # timer - if you dont make a decission in 10 sek. you automatically get status: 'ingame' 
         pass
 
     def give_3(self):
@@ -131,6 +149,9 @@ class Table(models.Model):  # Game
         # check who win
         # give him all money from the pool
         # again?: (10sec. -> then -> no('out')) yes: you play on ('ingame'), no: ('out')
+
+        # delete from table and player.table field if no decission... (timer)
+
         # end_game()
         # start game again: zero()
         pass

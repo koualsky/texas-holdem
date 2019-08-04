@@ -4,7 +4,8 @@
 <a href="{% url 'start' %}">Start</a>
 
 {% if user.is_authenticated %}
-    Hello <strong>{{ user }}</strong> you have <strong>{{ request.user.player.money }}$</strong>
+    <strong>{{ user }}</strong> you have <strong>{{ request.user.player.money }}$</strong>
+    and you are a part of <strong>{{ table.pk }}</strong> game
     <a href="{% url 'logout' %}">logout</a>
 {% else %}
     <a href="{% url 'login' %}">login</a>
