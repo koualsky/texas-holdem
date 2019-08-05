@@ -5,7 +5,9 @@
 
 {% if user.is_authenticated %}
     <strong>{{ user }}</strong> you have <strong>{{ request.user.player.money }}$</strong>
-    and you are a part of <strong>{{ table.pk }}</strong> game
+    {% if table.pk %}
+        and you are a part of <strong>{{ table.pk }}</strong> game
+    {% endif %}
     <a href="{% url 'logout' %}">logout</a>
 {% else %}
     <a href="{% url 'login' %}">login</a>
