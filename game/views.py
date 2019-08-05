@@ -21,7 +21,7 @@ def play(request):
 
         # we try to take only one record!
         try:
-            table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None))[0]
+            table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None)).order_by('pk')[0]
 
         # but if db has 0 records that upper example return Error. For that reason we have 'except' statement:
         except:
@@ -32,7 +32,7 @@ def play(request):
         if not table:
             table = Table(player1=get_object_or_404(Player, pk=request.user.player.pk))  # request.user)
             table.save()
-            request.user.player.table = table.pk
+            request.user.player.table = table
             request.user.player.save()
 
         # If we have a table with empty spot - join to this table and write pk of this table to player 'table' field
@@ -50,12 +50,12 @@ def play(request):
             elif table.player4 == None:
                 table.player4 = get_object_or_404(Player, pk=request.user.player.pk)  # str(request.user)
                 table.save()
-            request.user.player.table = table.pk
+            request.user.player.table = table
             request.user.player.save()
 
     # YES, i'm joined to some table, so simply return this table:
     else:
-        table = get_object_or_404(Table, pk=int(request.user.player.table))
+        table = get_object_or_404(Table, pk=int(request.user.player.table.pk))
 
     return render(request, 'game/table.html', {'table': table})
 
