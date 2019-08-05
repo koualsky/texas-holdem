@@ -40,21 +40,22 @@ def play(request):
 
         # FREE SPOT. If we have a table with empty spot - join to this table and write pk of this table to player 'table' field
         else:
+
             # Check table.player1 was have free spot:
             if table.player1 == None:  # change to not table.player1
 
                 # Add me to empty slot
-                table.player1 = get_object_or_404(Player, pk=request.user.player.pk)  # str(request.user)
+                table.player1 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
 
             elif table.player2 == None:
-                table.player2 = get_object_or_404(Player, pk=request.user.player.pk)  # str(request.user)
+                table.player2 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
             elif table.player3 == None:
-                table.player3 = get_object_or_404(Player, pk=request.user.player.pk)  # str(request.user)
+                table.player3 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
             elif table.player4 == None:
-                table.player4 = get_object_or_404(Player, pk=request.user.player.pk)  # str(request.user)
+                table.player4 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
 
             # Add this table to 'user' table (related to table) field
