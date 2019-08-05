@@ -15,7 +15,7 @@ class Player(models.Model):
     # (out, wait_for_start, start, check, call, raise, pass)
     # table = models.ForeignKey(Table, on_delete=models.CASCADE)
     #table = models.IntegerField(null=True)
-    table = models.OneToOneField('game.table', on_delete=models.SET_NULL, related_name='table', null=True)
+    table = models.ForeignKey('game.table', on_delete=models.SET_NULL, related_name='tablee', null=True)  # , unique=True)
 
     def __str__(self):
         return str(self.name)
