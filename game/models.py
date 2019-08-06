@@ -65,16 +65,10 @@ class Table(models.Model):  # Game
     """Attributes and methods for the Table"""
 
     # Attributes
-    # models.OneToOneField(User, on_delete=models.CASCADE, related_name='player', unique=True)
-    player1 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player1', null=True)  # , unique=True)
-    #player1 = models.CharField(max_length=200, null=True)
-    player2 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player2', null=True)  # , unique=True)
-    #player2 = models.CharField(max_length=200, null=True)
-    player3 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player3', null=True)  # , unique=True)
-    #player3 = models.CharField(max_length=200, null=True)
-    player4 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player4', null=True)  # , unique=True)
-    #player4 = models.CharField(max_length=200, null=True)
-
+    player1 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player1', null=True)
+    player2 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player2', null=True)
+    player3 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player3', null=True)
+    player4 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player4', null=True)
     dealer = models.CharField(max_length=200, null=True)
     pool = models.IntegerField(default=0)
     deck = models.CharField(max_length=500, null=True)
@@ -96,7 +90,6 @@ class Table(models.Model):  # Game
         )
 
     # Assistant Methods
-
     def how_many_players(self):
         """Count how many players is in the particular game"""
 

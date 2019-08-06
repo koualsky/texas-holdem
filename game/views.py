@@ -69,6 +69,32 @@ def play(request):
     return render(request, 'game/table.html', {'table': table})
 
 
+@login_required
+def exit(request):
+    # 1. Remove me from slot in table (set Null to player.table)
+    table = request.user.player.table
+    player = request.user.player
+    if table.player1 == player:
+        table.player1 = None
+        table.save()
+    if table.player2 == player:
+        table.player2 = None
+        table.save()
+    if table.player3 == player:
+        table.player3 = None
+        table.save()
+    if table.player4 == player:
+        table.player4 = None
+        table.save()
+
+    # 2. Remove Table from my profile
+    request.user.player.table = None
+    request.user.player.save()
+
+    # 3. Redirect to start page
+    return redirect('start')
+
+
 # Authentication
 def register(request):
 
