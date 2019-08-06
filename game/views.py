@@ -16,38 +16,37 @@ def start(request):
 def play(request):
     """Add player to free table or create new table from the last id in db +1 (4/table)."""
 
-    # NOT joined to any table:
+    # 1. NOT joined to any table:
     if not request.user.player.table:
 
-        # we try to take only one record!
+        # (pre) we try to take only one record!
         try:
             table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None)).order_by('pk')[0]
 
-        # but if db has 0 records that upper example return Error. For that reason we have 'except' statement:
+        # (pre) but if db has 0 records that upper example return Error. For that reason we have 'except' statement:
         except:
             table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None))
 
-        # NO FREE SPOT. We don't have a table with empty spot where we can join
+        # a) NO FREE SPOT. We don't have a table with empty spot where we can join
         if not table:
 
-            # Create new Table with 'user' as first player
+            # - Table. Create new Table with 'user' as first player
             table = Table(player1=get_object_or_404(Player, pk=request.user.player.pk))  # request.user)
             table.save()
 
-            # Add this table to 'user' table (related to table) field
+            # - Player. Add this table to 'user' table (related to table) field
             request.user.player.table = table
+            request.user.player.state = 'wait_for_start'
             request.user.player.save()
 
-        # FREE SPOT. If we have a table with empty spot - join to this table and write pk of this table to player 'table' field
+        # b) FREE SPOT. If we have a table with empty spot - join to this table and write pk of this table to player 'table' field
         else:
 
-            # Check table.player1 was have free spot:
-            if table.player1 == None:  # change to not table.player1
-
-                # Add me to empty slot
+            # - Table. Check table.player1 was have free spot:
+            # If slot is empty: add me to empty slot
+            if table.player1 == None:
                 table.player1 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
-
             elif table.player2 == None:
                 table.player2 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
@@ -58,13 +57,16 @@ def play(request):
                 table.player4 = get_object_or_404(Player, pk=request.user.player.pk)
                 table.save()
 
-            # Add this table to 'user' table (related to table) field
+            # - Player. Add this table to 'user' table (related to table) field
             request.user.player.table = table
+            request.user.player.state = 'wait_for_start'
             request.user.player.save()
 
-    # YES, i'm joined to some table, so simply return this table:
+    # 2. YES, i'm joined to some table, so simply return this table:
     else:
         table = get_object_or_404(Table, pk=int(request.user.player.table.pk))
+
+    # IN THIS AREA ADD LOGIC OF GAME
 
     return render(request, 'game/table.html', {'table': table})
 
@@ -89,6 +91,7 @@ def exit(request):
 
     # 2. Remove Table from my profile
     request.user.player.table = None
+    request.user.player.state = 'out'
     request.user.player.save()
 
     # 3. Redirect to start page

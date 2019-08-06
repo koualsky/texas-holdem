@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<a href="{% url 'play' %}">Refresh</a>
+|
 <a href="{% url 'exit' %}">Exit game</a>
 <h3>Pool: {{ table.pool }}</h3>
 <h3>Cards on table: {{ table.cards_on_table }}</h3>
