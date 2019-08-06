@@ -5,30 +5,48 @@
 <a href="{% url 'play' %}">Refresh</a>
 |
 <a href="{% url 'exit' %}">Exit game</a>
-<h3>Pool: {{ table.pool }}</h3>
-<h3>Cards on table: {{ table.cards_on_table }}</h3>
+<h4>Pool: {{ table.pool }}</h4>
+<h4>Cards on table: {{ table.cards_on_table }}</h4>
+<h4>Game state: {{ table.game_state }}</h4>
 
-<p>
-    <!-- Show who have dealer button if this button is in table. RELATED? ;) -->
-    {% if table.dealer %}{{ table.dealer }}{% endif %}
-    {{ table.player1 }}
-    {{ table.player1.money }}
-</p>
-<p>
-    {% if table.dealer %}{{ table.dealer }}{% endif %}
-    {{ table.player2 }}
-    {{ table.player2.money }}
-</p>
-<p>
-    {% if table.dealer %}{{ table.dealer }}{% endif %}
-    {{ table.player3 }}
-    {{ table.player3.money }}
-</p>
-<p>
-    {% if table.dealer %}{{ table.dealer }}{% endif %}
-    {{ table.player4 }}
-    {{ table.player4.money }}
-</p>
 
+
+<table>
+    <tr>
+        <td><!-- Dealer --></td>
+        <td>Player</td>
+        <td>Money</td>
+        <td>Cards</td>
+        <td>Rate</td>
+        <td>State</td>
+    </tr>
+
+    {% for player in players_list %}
+    <tr>
+        <!-- Show who have dealer button if this button is in table. RELATED? ;) -->
+        <td>{% if table.dealer == player %}{{ table.dealer }}{% endif %}</td>
+        <td>{{ player }}</td>
+        <td>{{ player.money }}</td>
+        <td>{{ player.cards }}</td>
+        <td>how much i gave</td>
+        <td>
+
+            <!-- If you are you AND you dont select decission yet AND is your turn - you can make decission now -->
+            {% if request.user.player == player and request.user.player.state == 'start' %}
+                <a href="">check</a>
+                <a href="">call</a>
+                <a href="">raise</a>
+                <a href="">pass</a>
+
+            <!-- If you aren't you, show him status -->
+            {% else %}
+                {{ player.state }}
+            {% endif %}
+
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
 
 {% endblock %}

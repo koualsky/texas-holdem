@@ -12,7 +12,7 @@ class Player(models.Model):
     money = models.IntegerField(default=100)
     cards = models.CharField(max_length=100)
     state = models.CharField(max_length=100, default="out")
-    # (out, wait_for_start, start, check, call, raise, pass)
+    # (out, ready, start, check, call, raise, pass)
     table = models.ForeignKey('game.table', on_delete=models.SET_NULL, related_name='tablee', null=True)
 
     def __str__(self):
@@ -29,7 +29,7 @@ class Player(models.Model):
         pass
 
     def join(self, player):  # Table method?
-        """If gamer have 'wait_for_start' status -> add him to Table.players"""
+        """If gamer have 'ready' status -> add him to Table.players"""
         pass
 
     # Change States
@@ -41,9 +41,9 @@ class Player(models.Model):
 
         self.state = 'out'
 
-    def wait_for_start(self):  # sit
+    def ready(self):  # sit
         """Sit to the chosen place. The game will start after the turn. State for players who are 'out' of the game"""
-        self.state = 'wait_for_start'
+        self.state = 'ready'
 
     def startt(self):
         self.state = 'start'
@@ -69,10 +69,11 @@ class Table(models.Model):  # Game
     player2 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player2', null=True)
     player3 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player3', null=True)
     player4 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player4', null=True)
-    dealer = models.CharField(max_length=200, null=True)
+    dealer = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='dealer', null=True)
     pool = models.IntegerField(default=0)
     deck = models.CharField(max_length=500, null=True)
     cards_on_table = models.CharField(max_length=100, null=True)
+    game_state = models.CharField(max_length=200, default='ready', null=True)
     # path = models.CharField(max_length=200)  # ?????????????????????????????
 
     def __str__(self):
@@ -93,12 +94,11 @@ class Table(models.Model):  # Game
     def how_many_players(self):
         """Count how many players is in the particular game"""
 
-        # count commas from self.players
-        # 0 commas or empty field: zero
-        # 1 comma: one
-        # etc.
-        # return 0
-        pass
+        result = 0
+        for e in (self.player1, self.player2, self.player3, self.player4):
+            if e is not None:
+                result += 1
+        return result
 
     # Game Methods
     def zero(self):
