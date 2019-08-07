@@ -16,85 +16,72 @@ def start(request):
 def play(request):
     """Add player to free table or create new table from the last id in db +1 (4/table)."""
 
-    # 1. NOT joined to any table:
-    if not request.user.player.table:
+    # PRE
+    join(request)
+    table = request.user.player.table
 
-        # (pre) we try to take only one record!
-        try:
-            table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None)).order_by('pk')[0]
+    # GAME PATH
+    table.start()    # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
+    # table.dealer() # 2. Dealer (GAME: start -> dealer)
+    # table.small()  # 3. Small  (GAME: dealer -> small)
+    # table.big()    # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
+    # in end of Big write check() function, and in end of rest functions... but after Give_1_again no. then only winner()
+    # table.give_2   # 5. Give_2 (GAME: big -> give_2, PLAYER: start -> check/call/raise/pass)-after round -> start (if min. 2 plrs)
+    # table.give_3   # 6. Give_3 (GAME: give_2 -> give_3, PLAYER: start -> check/call/raise/pass)
+    # table.give_1   # 7. Give_1 (GAME: give_3 -> give_1, PLAYER: start -> check/call/raise/pass)
+    # table.give_1_ag# 8. Give_1_again (GAME: give_1 -> give_1_again, PLAYER: start -> check/call/raise/pass)
+    # table.winner() # 9. Winner (GAME: give_1_again -> give_2, PLAYER: start -> check/call/raise/pass)
 
-        # (pre) but if db has 0 records that upper example return Error. For that reason we have 'except' statement:
-        except:
-            table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None))
-
-        # a) NO FREE SPOT. We don't have a table with empty spot where we can join
-        if not table:
-
-            # - Table. Create new Table with 'user' as first player
-            table = Table(player1=get_object_or_404(Player, pk=request.user.player.pk))  # request.user)
-            table.save()
-
-            # - Player. Add this table to 'user' table (related to table) field
-            request.user.player.table = table
-            request.user.player.state = 'ready'
-            request.user.player.save()
-
-        # b) FREE SPOT. If we have a table with empty spot - join to this table and write pk of this table to player 'table' field
-        else:
-
-            # - Table. Check table.player1 was have free spot:
-            # If slot is empty: add me to empty slot
-            if table.player1 == None:
-                table.player1 = get_object_or_404(Player, pk=request.user.player.pk)
-                table.save()
-            elif table.player2 == None:
-                table.player2 = get_object_or_404(Player, pk=request.user.player.pk)
-                table.save()
-            elif table.player3 == None:
-                table.player3 = get_object_or_404(Player, pk=request.user.player.pk)
-                table.save()
-            elif table.player4 == None:
-                table.player4 = get_object_or_404(Player, pk=request.user.player.pk)
-                table.save()
-
-            # - Player. Add this table to 'user' table (related to table) field
-            request.user.player.table = table
-            request.user.player.state = 'ready'
-            request.user.player.save()
-
-    # 2. YES, i'm joined to some table, so simply return this table:
-    else:
-        table = get_object_or_404(Table, pk=int(request.user.player.table.pk))
-
-    # in this point we join to the game and have status 'ready'
-    # IN THIS AREA ADD LOGIC OF GAME
-
-    """
-    start_game(request)     # IF len(players) > 1 and table.game_status == 'ready': 
-                            # table.game_status = 'start'
-                            # players.status = 'start'
-    zero(request)           # IF table.game_status == 'start': dealer, small, big
-                            # table.game_status = 'first player...'
-
-    check(request)          # This function will be call in always, between every below function :)
-                            # IF me.status in ['start', 'check', 'call', 'raise'] and table.game_status == 'me':
-                                # make choice
-
-
-    give_2(request)         # 
-    give_3(request)
-    give_1(request)
-    give_1_again(request)
-    winner(request)
-    """
-
-    start_game(request)
-    check(request)
+    # GAME PATH (ready, start, dealer, small, big, give_2, give_3, give_1, give_1_again, winner)
+    # PLAYER PATH (out, ready, start, check, call, raise, pass)
 
     # Make list from player1, player2 etc. becauce i can't do this in django template language
-    players_list = [table.player1, table.player2, table.player3, table.player4]
-
+    table = request.user.player.table
+    players_list = table.all_players()
     return render(request, 'game/table.html', {'table': table, 'players_list': players_list})
+
+
+# Auxiliary methods
+@login_required
+def join(request):
+    """Joining to the game"""
+
+    # 2. If player 'table' field is empty, start joining to the game procedure
+    if request.user.player.table == None:
+
+        table = find_table(request)
+        register_player(request, table)
+
+
+@login_required
+def find_table(request):
+    """Return free table or return None if tables are full or don't exist"""
+
+    try:
+        table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None)).order_by('pk')[0]
+    except:
+        table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None))
+
+    return table
+
+
+@login_required
+def register_player(request, table):
+    """Save table in player.table and save player in table.player1/2/3/4"""
+
+    # Table don't exist in db
+    if table == None:
+        table = Table(player1=request.user.player)
+        table.save()
+        request.user.player.table = table
+        request.user.player.save()
+
+    # We have a table with empty slot
+    else:
+        table.add_player(request.user.player)
+        table.save()
+        request.user.player.table = table
+        request.user.player.save()
 
 
 @login_required
@@ -127,77 +114,6 @@ def exit(request):
 
     # 3. Redirect to start page
     return redirect('start')
-
-
-# Auxiliary methods
-def start_game(request):
-    # IF in table is more than 1 player AND game staus is 'ready'
-    table = get_object_or_404(Table, pk=request.user.player.table.pk)
-    if table.how_many_players() > 1 and table.game_state == 'ready':
-
-        # 1. Change game state to 'start'
-        table.game_state = 'start'
-        table.save()
-
-        # 2. Give all available (in game) players state 'start'
-        if table.player1 and table.player1.state == 'ready':
-            table.player1.state = 'start'
-            table.player1.save()
-        if table.player2 and table.player2.state == 'ready':
-            table.player2.state = 'start'
-            table.player2.save()
-        if table.player3 and table.player3.state == 'ready':
-            table.player3.state = 'start'
-            table.player3.save()
-        if table.player4 and table.player4.state == 'ready':
-            table.player4.state = 'start'
-            table.player4.save()
-
-        # 3. dealer, small, big
-
-        # a) make list with all available players
-        players_list = []
-        for player in [table.player1, table.player2, table.player3, table.player4]:
-            if player is not None:
-                players_list.append(player)
-
-        # b) dealer
-        if table.dealer is not None and table.dealer in players_list:
-
-            # if in previous game someone have a dealer. give them next player
-            if table.dealer == players_list[-1]:
-
-                # if present dealer is the last player in players_list
-                table.dealer = players_list[0]
-                table.save()
-            else:
-
-                # if no ...
-                table.dealer = players_list[players_list.index(table.dealer) + 1]
-                table.save()
-
-        else:
-
-            # if in prevous game no one have a dealer. give dealer first player
-            table.dealer = players_list[0]
-            table.save()
-
-        # c) small_blind
-
-        '''
-        - make list with all available players
-        - check from table.dealer who have dealer
-            - if 1 -> give dealer 2
-            - if 4 -> give dealer 1
-            - itd.
-            - else: -> give dealer 1
-        - next from dealer -> small
-        - next from small (if exist) -> big
-        '''
-
-
-def check(request):
-    print(request.user.player)
 
 
 # Authentication

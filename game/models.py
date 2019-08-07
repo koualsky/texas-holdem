@@ -18,48 +18,6 @@ class Player(models.Model):
     def __str__(self):
         return str(self.name)
 
-    # Assistant Methods
-    def change_name(self):
-        """Change your name. Only on start page."""
-        pass
-
-    def play(self):
-        """After click 'Play'. Check which of the running games has free place
-        or create a new Game"""
-        pass
-
-    def join(self, player):  # Table method?
-        """If gamer have 'ready' status -> add him to Table.players"""
-        pass
-
-    # Change States
-    def outt(self):
-        """ You'll not in the game any more. But you can watch"""
-
-        # delete my name from Game.players (get_object_or_404, and func to dlete from players field)
-        # change my state to: 'out'
-
-        self.state = 'out'
-
-    def ready(self):  # sit
-        """Sit to the chosen place. The game will start after the turn. State for players who are 'out' of the game"""
-        self.state = 'ready'
-
-    def startt(self):
-        self.state = 'start'
-
-    def checkk(self):
-        self.state = 'checkk'
-
-    def calll(self):
-        self.state = 'calll'
-
-    def raisee(self):
-        self.state = 'raisee'
-
-    def passs(self):
-        self.passs = 'passs'
-
 
 class Table(models.Model):  # Game
     """Attributes and methods for the Table"""
@@ -74,7 +32,6 @@ class Table(models.Model):  # Game
     deck = models.CharField(max_length=500, null=True)
     cards_on_table = models.CharField(max_length=100, null=True)
     game_state = models.CharField(max_length=200, default='ready', null=True)
-    # path = models.CharField(max_length=200)  # ?????????????????????????????
 
     def __str__(self):
         return (
@@ -100,18 +57,79 @@ class Table(models.Model):  # Game
                 result += 1
         return result
 
+    def all_players(self):
+        """Return list with all players in this table"""
+
+        players_list = []
+        for player in [self.player1, self.player2, self.player3, self.player4]:
+            if player is not None:
+                players_list.append(player)
+        return players_list
+
+    def set_all_available_players_state(self, state):
+        """Set 'start' state to player if player exist"""
+
+        if self.player1 is not None:
+            self.player1.state = state
+            self.player1.save()
+        if self.player2 is not None:
+            self.player2.state = state
+            self.player2.save()
+        if self.player3 is not None:
+            self.player3.state = state
+            self.player3.save()
+        if self.player4 is not None:
+            self.player4.state = state
+            self.player4.save()
+
+    def return_next(players_list, start_player):
+        """Return player - next from start player"""
+
+        length = len(players_list)
+        indx = players_list.index(start_player)
+
+        if indx == len(players_list) - 1:
+            return players_list[0]
+        else:
+            return players_list[indx + 1]
+
+    def add_player(self, player):
+        if self.player1 == None:
+            self.player1 = player
+        elif self.player2 == None:
+            self.player2 = player
+        elif self.player3 == None:
+            self.player3 = player
+        elif self.player4 == None:
+            self.player4 = player
+
     # Game Methods
-    def zero(self):
-        """Start game by give: dealer, small_blind and big blind buttons"""
+    def start(self):
+        """Set 'start' state for table and available players in table 
+        if number of players in this table is > 1
+        and state of game is 'ready'"""
 
-        # PRECONDITION: All game must go in one view (e.g. .../game/id_17). Based on statuses.
-        # Everyone can see game, but only registeres players can make decissions
+        if self.how_many_players() > 1 and self.game_state == 'ready':
+            self.set_all_available_players_state('start')
+            self.game_state = 'start'
+            self.save()
 
-        # dealer() (if no one have dealer -> give to the first player, if someone have dealer -> next)
-        # small_blind() (get $ to pool from next player of dealer)
-        # big_blind() (get $ to pool from 2 steps player of dealer)
-        # give 2 cards to each player (everyone can only see their cards)
-        pass
+    def dealer(self):
+        """Give dealer button to first player or next of previous gamer"""
+
+        # If dealer field exist, give dealer to the next player of players list
+        if self.dealer:
+
+            players_list = all_players()
+            start_player = self.dealer
+            self.dealer = return_next(players_list, start_player)
+
+            # Give dealer first player from players list
+        else:
+            self.dealer = players[0]
+
+        # Set game status to 'dealer'
+        self.game_state = 'dealer'
 
     def decission(self):
         """After ech deal, the player must make a decission: check/call, raise, pass"""
