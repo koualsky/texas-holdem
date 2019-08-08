@@ -24,7 +24,11 @@
     {% for player in players_list %}
     <tr>
         <!-- Show who have dealer button if this button is in table. RELATED? ;) -->
-        <td>{% if table.dealer == player %}{{ table.dealer }}{% endif %}</td>
+        <td>
+            {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
+            <!-- {% if table.game_state != 'ready' and table.dealer == player %} s {% endif %} -->
+            <!-- {% if table.game_state != 'ready' and table.dealer == player %} b {% endif %} -->
+        </td>
         <td>{{ player }}</td>
         <td>{{ player.money }}</td>
         <td>{{ player.cards }}</td>

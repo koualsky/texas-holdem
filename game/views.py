@@ -22,7 +22,7 @@ def play(request):
 
     # GAME PATH
     table.start()    # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
-    # table.dealer() # 2. Dealer (GAME: start -> dealer)
+    table.dealer_button()  # 2. Dealer (GAME: start -> dealer)
     # table.small()  # 3. Small  (GAME: dealer -> small)
     # table.big()    # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
     # in end of Big write check() function, and in end of rest functions... but after Give_1_again no. then only winner()
@@ -36,7 +36,6 @@ def play(request):
     # PLAYER PATH (out, ready, start, check, call, raise, pass)
 
     # Make list from player1, player2 etc. becauce i can't do this in django template language
-    table = request.user.player.table
     players_list = table.all_players()
     return render(request, 'game/table.html', {'table': table, 'players_list': players_list})
 
@@ -55,7 +54,7 @@ def join(request):
 
 @login_required
 def find_table(request):
-    """Return free table or return None if tables are full or don't exist"""
+    """Return table with free spots or return None if tables are full or don't exist"""
 
     try:
         table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None)).order_by('pk')[0]
@@ -70,7 +69,7 @@ def register_player(request, table):
     """Save table in player.table and save player in table.player1/2/3/4"""
 
     # Table don't exist in db
-    if table == None:
+    if not table:
         table = Table(player1=request.user.player)
         table.save()
         request.user.player.table = table

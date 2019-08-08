@@ -62,7 +62,7 @@ class Table(models.Model):  # Game
 
         players_list = []
         for player in [self.player1, self.player2, self.player3, self.player4]:
-            if player is not None:
+            if player != None:
                 players_list.append(player)
         return players_list
 
@@ -82,15 +82,20 @@ class Table(models.Model):  # Game
             self.player4.state = state
             self.player4.save()
 
-    def return_next(players_list, start_player):
+    def return_next(self, players_list, start_player):
         """Return player - next from start player"""
-
-        length = len(players_list)
-        indx = players_list.index(start_player)
-
-        if indx == len(players_list) - 1:
+        print('\n\n\n START')
+        print(players_list)
+        print(start_player)                                                     # this is call later, by table.dealer()
+        length = len(players_list)                                              # PROBLEM IS WITH START_PLAYER!!!!!!!
+        indx = players_list.index(start_player)                                 # NIE MA TEGO OBIEKTU A ZAMIAST NONE
+        print(players_list)                                                     # ZWRACA MI COS DZIWNEGO
+        print(start_player)
+        if indx == length - 1:
+            print(players_list[0])
             return players_list[0]
         else:
+            print(players_list[indx + 1])
             return players_list[indx + 1]
 
     def add_player(self, player):
@@ -114,22 +119,32 @@ class Table(models.Model):  # Game
             self.game_state = 'start'
             self.save()
 
-    def dealer(self):
+    def dealer_button(self):
         """Give dealer button to first player or next of previous gamer"""
 
-        # If dealer field exist, give dealer to the next player of players list
-        if self.dealer:
+        # 1. If game state is 'start', then we can give dealer button
+        if self.game_state == 'start':
 
-            players_list = all_players()
-            start_player = self.dealer
-            self.dealer = return_next(players_list, start_player)
+            # (pre) players list
+            players_list = self.all_players()
 
-            # Give dealer first player from players list
-        else:
-            self.dealer = players[0]
+            # a) If dealer field is empty - give dealer to the first player from players list
+            if self.dealer == None:
+                self.dealer = players_list[0]
 
-        # Set game status to 'dealer'
-        self.game_state = 'dealer'
+            # b) If dealer field exist, give dealer to the next player of players list
+            else:
+                start_player = self.dealer                                      # TO POBIERA MI JAKIS DZIWNY OBIEKT ZAMIAST
+                                                                                # REFERENCJI DO POLA DEALER.
+                                                                                # w ogóle nie mam pola dealer w db!
+
+                                                                                # a w ogóle co mi wywołuje metodę table.dealer() !?
+
+                self.dealer = self.return_next(players_list, start_player)
+
+            # Set game status to 'dealer'
+            self.game_state = 'dealer'
+            self.save()
 
     def decission(self):
         """After ech deal, the player must make a decission: check/call, raise, pass"""
