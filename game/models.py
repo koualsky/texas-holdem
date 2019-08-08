@@ -88,13 +88,9 @@ class Table(models.Model):  # Game
 
         length = len(players_list)
         indx = players_list.index(start_player)
-        print(players_list)
-        print(start_player)
         if indx == length - 1:
-            print(players_list[0])
             return players_list[0]
         else:
-            print(players_list[indx + 1])
             return players_list[indx + 1]
 
     def add_player(self, player):
@@ -175,28 +171,27 @@ class Table(models.Model):  # Game
 
         # 1. If game state is 'small_blind' and in game is more than 2 players
         # we can take big_blind
-        if self.game_state == 'small_blind' and self.all_players() > 2:
+        if self.game_state == 'small_blind' and self.how_many_players() > 2:
 
-
-
-
-
-            # 1. Save to small_blind field 'player' next from 'dealer' player
+            # (pre)
             players_list = self.all_players()
-            self.small_blind = self.return_next(players_list, self.dealer)
+            big_blind = self.return_next(players_list, self.small_blind)
 
-            # 2. Take 'small blind' from 'small_blind' player
-            self.pool += 1
-            self.small_blind.money -= 1
-            self.small_blind.save()
+            # Second condition -> does big_blind player have a 'start' state?
+            if big_blind.state == 'start':
 
+                # 1. Save to 'big_blind' field
+                # player next from 'small_blind' player
+                self.big_blind = big_blind
 
+                # 2. Take 'small blind' from 'small_blind' player
+                self.pool += 2
+                self.big_blind.money -= 2
+                self.big_blind.save()
 
-
-
-            # 3. Set game status to 'dealer'
-            self.game_state = 'big_blind'
-            self.save()
+                # 3. Set game status to 'big_blind'
+                self.game_state = 'big_blind'
+                self.save()
 
     def decission(self):
         """After ech deal, the player must make a decission: check/call, raise, pass"""

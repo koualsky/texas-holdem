@@ -27,7 +27,7 @@
         <td>
             {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
             {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
-            <!-- {% if table.game_state != 'ready' and table.dealer == player %} b {% endif %} -->
+            {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
         </td>
         <td>{{ player }}</td>
         <td>{{ player.money }}</td>

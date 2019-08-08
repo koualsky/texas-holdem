@@ -24,7 +24,7 @@ def play(request):
     table.start()            # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
     table.dealer_button()    # 2. Dealer (GAME: start -> dealer)
     table.take_small_blind() # 3. Small  (GAME: dealer -> small)
-    #table.take_big_blind()   # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
+    table.take_big_blind()   # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
     # in end of Big write check() function, and in end of rest functions... but after Give_1_again no. then only winner()
     # table.give_2           # 5. Give_2 (GAME: big -> give_2, PLAYER: start -> check/call/raise/pass)-after round -> start (if min. 2 plrs)
     # table.give_3           # 6. Give_3 (GAME: give_2 -> give_3, PLAYER: start -> check/call/raise/pass)
@@ -101,17 +101,26 @@ def exit(request):
         table.player4 = None
         table.save()
 
-    # 2. If I'm the last player in the game set table state to 'ready'
+    # 3. If after my leaving in table stay only 1 player
+    # - set table state to 'ready'
     if table.how_many_players() < 2:
         table.game_state = 'ready'
         table.save()
 
-    # 3. Remove Table from my profile
+    # 4. If after my leaving in table stay 0 players
+    # - set None to 'dealer, 'small_blind', 'big_blind' fields in Table
+    if table.how_many_players() < 1:
+        table.dealer = None
+        table.small_blind = None
+        table.big_blind = None
+        table.save()
+
+    # 4. Remove Table from my profile
     request.user.player.table = None
     request.user.player.state = 'out'
     request.user.player.save()
 
-    # 3. Redirect to start page
+    # 5. Redirect to start page
     return redirect('start')
 
 
