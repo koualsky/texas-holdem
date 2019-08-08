@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 # Later: count and verify 'max_length' fields in my models
 
-
 class Player(models.Model):
     """Attributes and methods for 'Player'"""
 
@@ -28,6 +27,8 @@ class Table(models.Model):  # Game
     player3 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player3', null=True)
     player4 = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='player4', null=True)
     dealer = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='dealer', null=True)
+    small_blind = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='small_blind', null=True)
+    big_blind = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='big_blind', null=True)
     pool = models.IntegerField(default=0)
     deck = models.CharField(max_length=500, null=True)
     cards_on_table = models.CharField(max_length=100, null=True)
@@ -47,7 +48,7 @@ class Table(models.Model):  # Game
             + ')'
         )
 
-    # Assistant Methods
+    # Additional Methods
     def how_many_players(self):
         """Count how many players is in the particular game"""
 
@@ -84,12 +85,10 @@ class Table(models.Model):  # Game
 
     def return_next(self, players_list, start_player):
         """Return player - next from start player"""
-        print('\n\n\n START')
+
+        length = len(players_list)
+        indx = players_list.index(start_player)
         print(players_list)
-        print(start_player)                                                     # this is call later, by table.dealer()
-        length = len(players_list)                                              # PROBLEM IS WITH START_PLAYER!!!!!!!
-        indx = players_list.index(start_player)                                 # NIE MA TEGO OBIEKTU A ZAMIAST NONE
-        print(players_list)                                                     # ZWRACA MI COS DZIWNEGO
         print(start_player)
         if indx == length - 1:
             print(players_list[0])
@@ -122,28 +121,81 @@ class Table(models.Model):  # Game
     def dealer_button(self):
         """Give dealer button to first player or next of previous gamer"""
 
-        # 1. If game state is 'start', then we can give dealer button
+        # 1. If game state is 'start', we can give dealer button
         if self.game_state == 'start':
 
             # (pre) players list
             players_list = self.all_players()
 
-            # a) If dealer field is empty - give dealer to the first player from players list
+            # a) If dealer field is empty - give dealer to the first player
+            # from players list
             if self.dealer == None:
                 self.dealer = players_list[0]
 
-            # b) If dealer field exist, give dealer to the next player of players list
+            # b) If dealer field exist, give dealer to the next player
+            # of players list
             else:
-                start_player = self.dealer                                      # TO POBIERA MI JAKIS DZIWNY OBIEKT ZAMIAST
-                                                                                # REFERENCJI DO POLA DEALER.
-                                                                                # w ogóle nie mam pola dealer w db!
 
-                                                                                # a w ogóle co mi wywołuje metodę table.dealer() !?
+                # a) if dealer from last table is in actually players list
+                # - give dealer to the next player from players list
+                if self.dealer in players_list:
+                    start_player = self.dealer
+                    self.dealer = self.return_next(players_list, start_player)
 
-                self.dealer = self.return_next(players_list, start_player)
+                # b) if dealer from the last table is not in actually players
+                # list - give dealer to the first player from players list
+                else:
+                    self.dealer = players_list[0]
 
             # Set game status to 'dealer'
             self.game_state = 'dealer'
+            self.save()
+
+    def take_small_blind(self):
+        """Take small blind from the next one from 'dealer player'"""
+
+        # 1. If game state is 'dealer', we can take small_blind
+        if self.game_state == 'dealer':
+
+            # 1. Save to small_blind field 'player' next from 'dealer' player
+            players_list = self.all_players()
+            self.small_blind = self.return_next(players_list, self.dealer)
+
+            # 2. Take 'small blind' from 'small_blind' player
+            self.pool += 1
+            self.small_blind.money -= 1
+            self.small_blind.save()
+
+            # 3. Set game status to 'dealer'
+            self.game_state = 'small_blind'
+            self.save()
+
+    def take_big_blind(self):
+        """Take big blind from the next one from 'small blind player'"""
+
+        # 1. If game state is 'small_blind' and in game is more than 2 players
+        # we can take big_blind
+        if self.game_state == 'small_blind' and self.all_players() > 2:
+
+
+
+
+
+            # 1. Save to small_blind field 'player' next from 'dealer' player
+            players_list = self.all_players()
+            self.small_blind = self.return_next(players_list, self.dealer)
+
+            # 2. Take 'small blind' from 'small_blind' player
+            self.pool += 1
+            self.small_blind.money -= 1
+            self.small_blind.save()
+
+
+
+
+
+            # 3. Set game status to 'dealer'
+            self.game_state = 'big_blind'
             self.save()
 
     def decission(self):
@@ -169,7 +221,7 @@ class Table(models.Model):  # Game
 
     # decission() - 4 cards on the table
 
-    def give_1(self):
+    def give_1_again(self):
         """Give 1 card to the table"""
         pass
 

@@ -21,16 +21,16 @@ def play(request):
     table = request.user.player.table
 
     # GAME PATH
-    table.start()    # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
-    table.dealer_button()  # 2. Dealer (GAME: start -> dealer)
-    # table.small()  # 3. Small  (GAME: dealer -> small)
-    # table.big()    # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
+    table.start()            # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
+    table.dealer_button()    # 2. Dealer (GAME: start -> dealer)
+    table.take_small_blind() # 3. Small  (GAME: dealer -> small)
+    #table.take_big_blind()   # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
     # in end of Big write check() function, and in end of rest functions... but after Give_1_again no. then only winner()
-    # table.give_2   # 5. Give_2 (GAME: big -> give_2, PLAYER: start -> check/call/raise/pass)-after round -> start (if min. 2 plrs)
-    # table.give_3   # 6. Give_3 (GAME: give_2 -> give_3, PLAYER: start -> check/call/raise/pass)
-    # table.give_1   # 7. Give_1 (GAME: give_3 -> give_1, PLAYER: start -> check/call/raise/pass)
-    # table.give_1_ag# 8. Give_1_again (GAME: give_1 -> give_1_again, PLAYER: start -> check/call/raise/pass)
-    # table.winner() # 9. Winner (GAME: give_1_again -> give_2, PLAYER: start -> check/call/raise/pass)
+    # table.give_2           # 5. Give_2 (GAME: big -> give_2, PLAYER: start -> check/call/raise/pass)-after round -> start (if min. 2 plrs)
+    # table.give_3           # 6. Give_3 (GAME: give_2 -> give_3, PLAYER: start -> check/call/raise/pass)
+    # table.give_1           # 7. Give_1 (GAME: give_3 -> give_1, PLAYER: start -> check/call/raise/pass)
+    # table.give_1_again     # 8. Give_1_again (GAME: give_1 -> give_1_again, PLAYER: start -> check/call/raise/pass)
+    # table.winner()         # 9. Winner (GAME: give_1_again -> give_2, PLAYER: start -> check/call/raise/pass)
 
     # GAME PATH (ready, start, dealer, small, big, give_2, give_3, give_1, give_1_again, winner)
     # PLAYER PATH (out, ready, start, check, call, raise, pass)
