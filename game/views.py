@@ -134,11 +134,63 @@ def check(request):
     """This function change table.decision to the next player and change my
     status to check and..."""
 
-    # Change player state
+    # 1. Znajdz kwote od gracza ktory daje najwiecej do puli i daj tyle samo
+    biggest_rate = request.user.player.table.biggest_rate()
+    different = biggest_rate - request.user.player.round_money
+    request.user.player.table.give_to_pool(request.user.player, different)
+
+    # 2. Change player state
     request.user.player.state = 'check'
     request.user.player.save()
 
-    # Change table.decision field to the next player
+    # 3. Change table.decision field to the next player
+    all_players = request.user.player.table.all_players_without_out_state()
+    start_player = request.user.player.table.decission
+    next_player = request.user.player.table.return_next(all_players, start_player)
+    request.user.player.table.decission = next_player
+    request.user.player.table.save()
+
+    return redirect('play')
+
+
+@login_required
+def raisee(request):
+    """This function raise up my round money."""
+
+    # 1. Get value from raise and get to the pool
+    how_much = int(request.POST.get('how_much'))
+    request.user.player.table.give_to_pool(request.user.player, how_much)
+
+    # 2. Change player state
+    request.user.player.state = 'raise'
+    request.user.player.save()
+
+    # 3. Change table.decision field to the next player
+    all_players = request.user.player.table.all_players_without_out_state()
+    start_player = request.user.player.table.decission
+    next_player = request.user.player.table.return_next(all_players, start_player)
+    request.user.player.table.decission = next_player
+    request.user.player.table.save()
+
+    return redirect('play')
+
+@login_required
+def passs(request):
+    """I passed this round..."""
+
+
+
+    ''' RAISE & PASS PROBLEMS:
+    - jak dam out, to znowu robi sie blad, a jak dam pass to gracz i tak dalej gra.........................
+    - z raise też jest problem - 
+    '''
+
+
+    # 1. Znajdz kwote od gracza ktory daje najwiecej do puli i daj tyle samo
+    request.user.player.state = 'pass'
+    request.user.player.save()
+
+    # 2. Change table.decision field to the next player
     all_players = request.user.player.table.all_players_without_out_state()
     start_player = request.user.player.table.decission
     next_player = request.user.player.table.return_next(all_players, start_player)

@@ -82,7 +82,8 @@ class Table(models.Model):  # Game
         return players_list
 
     def all_players_without_out_state(self):
-        """Return list with all players with 'start' state in this table"""
+        """Return list with all players without 'out' state in this table.
+        'in game'."""
 
         players_list = []
         for player in [self.player1, self.player2, self.player3, self.player4]:
@@ -150,6 +151,91 @@ class Table(models.Model):  # Game
             self.player3 = player
         elif self.player4 == None:
             self.player4 = player
+
+    def all_players_round_money_to_zero(self):
+        """Set round_money to zero for all players"""
+
+        for player in [self.player1, self.player2, self.player3, self.player4]:
+            if player != None:
+                player.round_money = 0
+                player.save()
+
+    def start_game_again(self):
+        if self.game_state == 'again':
+
+            # 1. Set to all players (not only 'in game') in table state = 'start'
+            self.set_all_available_players_state('start')
+
+            # 2. Set game state to 'start'
+            self.game_state = 'ready'
+
+            # 3. Set pool to 0
+            self.pool = 0
+            self.save()
+
+            # 4. Set all players round_money to 0
+            self.all_players_round_money_to_zero()
+
+    def next_game_state(self):
+        """Change current game state to the next from the game path"""
+
+        game_path = ['ready',
+                     'small_blind',
+                     'big_blind',
+                     'give_2',
+                     'give_3',
+                     'give_1',
+                     'give_1_again',
+                     'winner',
+                     'again'
+                     ]
+
+        # 1. Current game state and index of current game state from game_path
+        current_game_state = self.game_state
+        indx = game_path.index(current_game_state)
+
+        # 2. One player in the table can't change game state
+        if self.how_many_players() > 1:
+
+            # Change game state if all players makes decisions
+
+            # a) If game state is 'small_blind' and in the game is only 2 active
+            #    players: skip +2, not +1 game state
+            if current_game_state == 'small_blind' and self.all_players_without_out_state():
+                self.game_state = game_path[indx + 2]
+
+            # b) else: +1
+            else:
+                self.game_state = game_path[indx + 1]
+
+            self.save()
+
+        # 3. If game state is 'again' return to the 'start' position
+        self.start_game_again()
+
+    def biggest_rate(self):
+        """Return value from player.round_money from player who give the
+         biggest value"""
+
+        players_values = []
+        for player in [self.player1, self.player2, self.player3, self.player4]:
+            if player != None:
+                players_values.append(player.round_money)
+
+        return max(players_values)
+
+    def give_to_pool(self, player, how_much):
+        """From 'player' give money (how_much) to 'pool'"""
+
+        # Player
+        player.money -= how_much
+        player.round_money += how_much
+        player.save()
+
+        # Game
+        self.pool += how_much
+        self.save()
+
 
     # Game Methods
     def start(self):
@@ -259,18 +345,16 @@ class Table(models.Model):  # Game
         if self.all_players_in_game_make_decision():
 
             # 1. Change game state to next from path (give_2, give_3, etc.)
+            self.next_game_state()
 
             # 2. Call function by game_state (look up)
+            # give_2()
+            # give_3()
+            # ...
 
             # 3. Change game state for players 'in game' to 'start'
-            # (whe we go to the 'winner' function - that function change totally ALL PLAYERS status to 'start')
+            # (when we go to the 'again' function - that function change totally ALL PLAYERS state to 'start')
             self.set_all_in_game_players_state('start')
-
-            # zrobic tak aby status gry po kazdej parze podjetych decyzji sie
-            # zmienial i aby dojsc do winner
-            # a jak dojde to winner to niech narazie nic nie robi
-            # tylko zmienia status WSZYSTKICH zapisanych do stolu graczy
-            # na start...
 
     def make_decission(self):
         """After ech deal, the player must make a decission: check/call, raise, pass"""

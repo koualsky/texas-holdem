@@ -1,4 +1,5 @@
 {% extends "game/base.html" %}
+{% load game_extras %}
 
 {% block content %}
 
@@ -48,15 +49,27 @@
 
              <!-- If you are you AND you dont select decission yet AND is your turn - you can make decission now -->
             {% if request.user.player == player and table.decission == player %}
-                <a href="{% url 'check' %}">check</a>
-                <a href="">call</a>
-                <a href="">raise</a>
-                <a href="">pass</a>
+
+                <!-- This button shows when all players have the same round_money -->
+                {% if request.user.player.round_money == table.biggest_rate %}
+                    <a href="{% url 'check' %}">check</a>
+
+                <!-- This button shows when you have to add to game pool  -->
+                {% else %}
+                    <a href="{% url 'check' %}">call</a>
+                {% endif %}
+
+                <form action="/raise/" method="POST" style="float:left;">{% csrf_token %}
+                    <input id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="1" max="{{ request.user.player.money }}" style="width:50px;">
+                    <button type="submit">raise</button>
+                </form>
+
+                <a href="{% url 'pass' %}">pass</a>
             {% endif %}
 
             <!-- Show who turn is now -->
             {% if table.decission == player %}
-                (! making decision)
+                (you!)
             <!-- If you aren't you, show him status -->
             {% else %}
                 {{ player.state }}

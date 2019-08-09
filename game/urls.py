@@ -10,6 +10,8 @@ urlpatterns = [
 
     # Decisions
     path('check/', views.check, name='check'),
+    path('pass/', views.passs, name='pass'),
+    path('raise/', views.raisee, name='raise'),
 
     # Authentication
     path('accounts/', include('django.contrib.auth.urls')),
