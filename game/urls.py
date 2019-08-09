@@ -8,6 +8,9 @@ urlpatterns = [
     path('table/', views.play, name='play'),
     path('exit/', views.exit, name='exit'),
 
+    # Decisions
+    path('check/', views.check, name='check'),
+
     # Authentication
     path('accounts/', include('django.contrib.auth.urls')),
     path('register/', views.register, name='register'),

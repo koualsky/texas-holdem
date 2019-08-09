@@ -25,12 +25,15 @@ def play(request):
     table.dealer_button()    # 2. Dealer (GAME: start -> dealer)
     table.take_small_blind() # 3. Small  (GAME: dealer -> small)
     table.take_big_blind()   # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
-    # in end of Big write check() function, and in end of rest functions... but after Give_1_again no. then only winner()
+
+    table.make_turn()
+
     # table.give_2           # 5. Give_2 (GAME: big -> give_2, PLAYER: start -> check/call/raise/pass)-after round -> start (if min. 2 plrs)
     # table.give_3           # 6. Give_3 (GAME: give_2 -> give_3, PLAYER: start -> check/call/raise/pass)
     # table.give_1           # 7. Give_1 (GAME: give_3 -> give_1, PLAYER: start -> check/call/raise/pass)
     # table.give_1_again     # 8. Give_1_again (GAME: give_1 -> give_1_again, PLAYER: start -> check/call/raise/pass)
     # table.winner()         # 9. Winner (GAME: give_1_again -> give_2, PLAYER: start -> check/call/raise/pass)
+    # table.again            #10. Again? Set all statuses to start
 
     # GAME PATH (ready, start, dealer, small, big, give_2, give_3, give_1, give_1_again, winner)
     # PLAYER PATH (out, ready, start, check, call, raise, pass)
@@ -118,10 +121,31 @@ def exit(request):
     # 4. Remove Table from my profile
     request.user.player.table = None
     request.user.player.state = 'out'
+    request.user.player.round_money = 0
     request.user.player.save()
 
     # 5. Redirect to start page
     return redirect('start')
+
+
+# Decisions
+@login_required
+def check(request):
+    """This function change table.decision to the next player and change my
+    status to check and..."""
+
+    # Change player state
+    request.user.player.state = 'check'
+    request.user.player.save()
+
+    # Change table.decision field to the next player
+    all_players = request.user.player.table.all_players_without_out_state()
+    start_player = request.user.player.table.decission
+    next_player = request.user.player.table.return_next(all_players, start_player)
+    request.user.player.table.decission = next_player
+    request.user.player.table.save()
+
+    return redirect('play')
 
 
 # Authentication

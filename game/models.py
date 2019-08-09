@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Later: count and verify 'max_length' fields in my models
+
 
 class Player(models.Model):
     """Attributes and methods for 'Player'"""
@@ -9,6 +11,7 @@ class Player(models.Model):
     # Attributes
     name = models.OneToOneField(User, on_delete=models.CASCADE, related_name='player', unique=True)
     money = models.IntegerField(default=100)
+    round_money = models.IntegerField(default=0)
     cards = models.CharField(max_length=100)
     state = models.CharField(max_length=100, default="out")
     # (out, ready, start, check, call, raise, pass)
@@ -29,6 +32,7 @@ class Table(models.Model):  # Game
     dealer = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='dealer', null=True)
     small_blind = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='small_blind', null=True)
     big_blind = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='big_blind', null=True)
+    decission = models.OneToOneField(Player, on_delete=models.SET_NULL, related_name='decission', null=True)
     pool = models.IntegerField(default=0)
     deck = models.CharField(max_length=500, null=True)
     cards_on_table = models.CharField(max_length=100, null=True)
@@ -67,6 +71,34 @@ class Table(models.Model):  # Game
                 players_list.append(player)
         return players_list
 
+    def all_players_with_start_state(self):
+        """Return list with all players with 'start' state in this table"""
+
+        players_list = []
+        for player in [self.player1, self.player2, self.player3, self.player4]:
+            if player != None:
+                if player.state == 'start':
+                    players_list.append(player)
+        return players_list
+
+    def all_players_without_out_state(self):
+        """Return list with all players with 'start' state in this table"""
+
+        players_list = []
+        for player in [self.player1, self.player2, self.player3, self.player4]:
+            if player != None:
+                if player.state != 'out':
+                    players_list.append(player)
+        return players_list
+
+    def all_players_in_game_make_decision(self):
+        """Return True if all players 'in game' make a decision"""
+
+        for e in self.all_players_without_out_state():
+            if e.state == 'start':
+                return False
+        return True
+
     def set_all_available_players_state(self, state):
         """Set 'start' state to player if player exist"""
 
@@ -80,6 +112,22 @@ class Table(models.Model):  # Game
             self.player3.state = state
             self.player3.save()
         if self.player4 is not None:
+            self.player4.state = state
+            self.player4.save()
+
+    def set_all_in_game_players_state(self, state):
+        """Set 'start' state to all players 'in game'"""
+
+        if self.player1 is not None and self.player1.state != 'out':
+            self.player1.state = state
+            self.player1.save()
+        if self.player2 is not None and self.player2.state != 'out':
+            self.player2.state = state
+            self.player2.save()
+        if self.player3 is not None and self.player3.state != 'out':
+            self.player3.state = state
+            self.player3.save()
+        if self.player4 is not None and self.player4.state != 'out':
             self.player4.state = state
             self.player4.save()
 
@@ -157,12 +205,17 @@ class Table(models.Model):  # Game
             players_list = self.all_players()
             self.small_blind = self.return_next(players_list, self.dealer)
 
-            # 2. Take 'small blind' from 'small_blind' player
+            # 2. Save to decission field 'player' next from 'small blind'
+            players_with_start = self.all_players_with_start_state()
+            self.decission = self.return_next(players_with_start, self.small_blind)
+
+            # 3. Take 'small blind' from 'small_blind' player
             self.pool += 1
             self.small_blind.money -= 1
+            self.small_blind.round_money = 1
             self.small_blind.save()
 
-            # 3. Set game status to 'dealer'
+            # 4. Set game status to 'dealer'
             self.game_state = 'small_blind'
             self.save()
 
@@ -184,16 +237,42 @@ class Table(models.Model):  # Game
                 # player next from 'small_blind' player
                 self.big_blind = big_blind
 
-                # 2. Take 'small blind' from 'small_blind' player
+                # 2. Save to decission field 'player' next from 'small blind'
+                players_with_start = self.all_players_with_start_state()
+                self.decission = self.return_next(players_with_start,
+                                                  self.big_blind)
+
+                # 3. Take 'small blind' from 'small_blind' player
                 self.pool += 2
                 self.big_blind.money -= 2
+                self.big_blind.round_money = 2
                 self.big_blind.save()
 
-                # 3. Set game status to 'big_blind'
+                # 4. Set game status to 'big_blind'
                 self.game_state = 'big_blind'
                 self.save()
 
-    def decission(self):
+    def make_turn(self):
+        """That function is call in every game page overload"""
+
+        # If all players in the game make decission: (potem: i tyle samo dali do puli!)
+        if self.all_players_in_game_make_decision():
+
+            # 1. Change game state to next from path (give_2, give_3, etc.)
+
+            # 2. Call function by game_state (look up)
+
+            # 3. Change game state for players 'in game' to 'start'
+            # (whe we go to the 'winner' function - that function change totally ALL PLAYERS status to 'start')
+            self.set_all_in_game_players_state('start')
+
+            # zrobic tak aby status gry po kazdej parze podjetych decyzji sie
+            # zmienial i aby dojsc do winner
+            # a jak dojde to winner to niech narazie nic nie robi
+            # tylko zmienia status WSZYSTKICH zapisanych do stolu graczy
+            # na start...
+
+    def make_decission(self):
         """After ech deal, the player must make a decission: check/call, raise, pass"""
 
         # check (if no one raise pool)
@@ -206,21 +285,23 @@ class Table(models.Model):  # Game
 
     def give_3(self):
         """Give 3 cards to the table"""
-        pass
 
-    # decission() - 3 cards on the table
+        # te funkcje maja na poczatku 'if' i tylko czekaja na spelniony
+        # warunek czyli aby table.game_state osiagnal ich stan.
+        # bo po osiagnieciu tego stanu automatycznie sie zalaczaja
+        #
+        # a kiedy osiagna ten stan? jak funkcja make_decission() (checker)
+        # uzna ze wszyscy gracze wrzucili ta sama ilosc $ do puli
+
+        pass
 
     def give_1(self):
         """Give 1 card to the table"""
         pass
 
-    # decission() - 4 cards on the table
-
     def give_1_again(self):
         """Give 1 card to the table"""
         pass
-
-    # decission() - 5 cards on the table. This is the final decission!
 
     def who_win(self):
         """Determines the winner and gives him all the money from the pool."""
@@ -229,6 +310,8 @@ class Table(models.Model):  # Game
         # again?: (10sec. -> then -> no('out')) yes: you play on ('ingame'), no: ('out')
 
         # delete from table and player.table field if no decission... (timer)
+
+        # self.decission = None
 
         # end_game()
         # start game again: zero()

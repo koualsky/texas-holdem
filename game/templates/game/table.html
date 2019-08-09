@@ -29,19 +29,34 @@
             {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
             {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
         </td>
+
+        <!-- This part of code is only for styling -->
+        {% if player.state == 'out' %}
+        <td style="color: grey;">{{ player }}</td>
+        <td style="color: grey;">{{ player.money }}</td>
+        <td style="color: grey;">{{ player.cards }}</td>
+        <td style="color: grey;">{{ player.round_money }}</td>
+        {% else %}
         <td>{{ player }}</td>
         <td>{{ player.money }}</td>
         <td>{{ player.cards }}</td>
-        <td>how much i gave</td>
-        <td>
+        <td>{{ player.round_money }}</td>
+        {% endif %}
 
-            <!-- If you are you AND you dont select decission yet AND is your turn - you can make decission now -->
-            {% if request.user.player == player and request.user.player.state == 'start' %}
-                <a href="">check</a>
+
+        <td style="color: grey;">
+
+             <!-- If you are you AND you dont select decission yet AND is your turn - you can make decission now -->
+            {% if request.user.player == player and table.decission == player %}
+                <a href="{% url 'check' %}">check</a>
                 <a href="">call</a>
                 <a href="">raise</a>
                 <a href="">pass</a>
+            {% endif %}
 
+            <!-- Show who turn is now -->
+            {% if table.decission == player %}
+                (! making decision)
             <!-- If you aren't you, show him status -->
             {% else %}
                 {{ player.state }}
