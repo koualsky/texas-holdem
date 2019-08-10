@@ -60,7 +60,7 @@
                 {% endif %}
 
                 <form action="/raise/" method="POST" style="float:left;">{% csrf_token %}
-                    <input id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="1" max="{{ request.user.player.money }}" style="width:50px;">
+                    <input id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="1" max="{{ request.user.player.money }}" style="width:40px;">
                     <button type="submit">raise</button>
                 </form>
 

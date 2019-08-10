@@ -100,6 +100,19 @@ class Table(models.Model):  # Game
                 return False
         return True
 
+    def all_players_in_game_give_the_same_value_to_the_table(self):
+        """Return True if all players 'in game' give the
+        same value to the pool"""
+
+        # 1. define max value
+        max_value = self.biggest_rate()
+
+        # 2. check every player give that value
+        for player in self.all_players_without_out_state():
+            if player.round_money != max_value:
+                return False
+        return True
+
     def set_all_available_players_state(self, state):
         """Set 'start' state to player if player exist"""
 
@@ -342,7 +355,8 @@ class Table(models.Model):  # Game
         """That function is call in every game page overload"""
 
         # If all players in the game make decission: (potem: i tyle samo dali do puli!)
-        if self.all_players_in_game_make_decision():
+        if self.all_players_in_game_make_decision() \
+                and self.all_players_in_game_give_the_same_value_to_the_table():
 
             # 1. Change game state to next from path (give_2, give_3, etc.)
             self.next_game_state()
