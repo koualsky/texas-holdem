@@ -38,7 +38,7 @@ def play(request):
     # GAME PATH (ready, start, dealer, small, big, give_2, give_3, give_1, give_1_again, winner)
     # PLAYER PATH (out, ready, start, check, call, raise, pass)
 
-    # Make list from player1, player2 etc. becauce i can't do this in django template language
+    # Make list from player1, player2 etc. because i can't do this in django template language
     players_list = table.all_players()
     return render(request, 'game/table.html', {'table': table, 'players_list': players_list})
 
@@ -139,12 +139,13 @@ def check(request):
     different = biggest_rate - request.user.player.round_money
     request.user.player.table.give_to_pool(request.user.player, different)
 
+    all_players = request.user.player.table.all_players_without_out_and_pass_state()
     # 2. Change player state
     request.user.player.state = 'check'
     request.user.player.save()
 
     # 3. Change table.decision field to the next player
-    all_players = request.user.player.table.all_players_without_out_state()
+    #all_players = request.user.player.table.all_players_without_out_state()
     start_player = request.user.player.table.decission
     next_player = request.user.player.table.return_next(all_players, start_player)
     request.user.player.table.decission = next_player
@@ -161,12 +162,13 @@ def raisee(request):
     how_much = int(request.POST.get('how_much'))
     request.user.player.table.give_to_pool(request.user.player, how_much)
 
+    all_players = request.user.player.table.all_players_without_out_and_pass_state()
     # 2. Change player state
     request.user.player.state = 'raise'
     request.user.player.save()
 
     # 3. Change table.decision field to the next player
-    all_players = request.user.player.table.all_players_without_out_state()
+    #all_players = request.user.player.table.all_players_without_out_state()
     start_player = request.user.player.table.decission
     next_player = request.user.player.table.return_next(all_players, start_player)
     request.user.player.table.decission = next_player
@@ -178,14 +180,7 @@ def raisee(request):
 def passs(request):
     """I passed this round..."""
 
-
-
-    ''' RAISE & PASS PROBLEMS:
-    - jak dam out, to znowu robi sie blad, a jak dam pass to gracz i tak dalej gra.........................
-    - z raise też jest problem - 
-    '''
-
-
+    #all_players = request.user.player.table.all_players_without_out_and_pass_state()
     # 1. Znajdz kwote od gracza ktory daje najwiecej do puli i daj tyle samo
     request.user.player.state = 'pass'
     request.user.player.save()

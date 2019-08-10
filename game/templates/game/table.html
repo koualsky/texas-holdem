@@ -47,7 +47,15 @@
 
         <td style="color: grey;">
 
-             <!-- If you are you AND you dont select decission yet AND is your turn - you can make decission now -->
+             <!-- If you are you
+             AND you don't select decision yet
+             AND is your turn
+             AND you don't have state 'pass'
+             - you can make decission now
+
+             If I add this condition, user don't see decision buttons but game roulette stops!
+             and request.user.player.state != 'pass'
+             -->
             {% if request.user.player == player and table.decission == player %}
 
                 <!-- This button shows when all players have the same round_money -->

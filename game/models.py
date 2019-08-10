@@ -92,6 +92,17 @@ class Table(models.Model):  # Game
                     players_list.append(player)
         return players_list
 
+    def all_players_without_out_and_pass_state(self):
+        """Return list with all players without 'out' and 'pass'
+        state in this table. 'in game'."""
+
+        players_list = []
+        for player in [self.player1, self.player2, self.player3, self.player4]:
+            if player != None:
+                if player.state != 'out' and player.state != 'pass':
+                    players_list.append(player)
+        return players_list
+
     def all_players_in_game_make_decision(self):
         """Return True if all players 'in game' make a decision"""
 
@@ -109,7 +120,7 @@ class Table(models.Model):  # Game
 
         # 2. check every player give that value
         for player in self.all_players_without_out_state():
-            if player.round_money != max_value:
+            if player.round_money != max_value and player.state != 'pass':
                 return False
         return True
 
@@ -132,16 +143,16 @@ class Table(models.Model):  # Game
     def set_all_in_game_players_state(self, state):
         """Set 'start' state to all players 'in game'"""
 
-        if self.player1 is not None and self.player1.state != 'out':
+        if self.player1 is not None and self.player1.state != 'out' and self.player1.state != 'pass':
             self.player1.state = state
             self.player1.save()
-        if self.player2 is not None and self.player2.state != 'out':
+        if self.player2 is not None and self.player2.state != 'out' and self.player2.state != 'pass':
             self.player2.state = state
             self.player2.save()
-        if self.player3 is not None and self.player3.state != 'out':
+        if self.player3 is not None and self.player3.state != 'out' and self.player3.state != 'pass':
             self.player3.state = state
             self.player3.save()
-        if self.player4 is not None and self.player4.state != 'out':
+        if self.player4 is not None and self.player4.state != 'out' and self.player4.state != 'pass':
             self.player4.state = state
             self.player4.save()
 
@@ -369,6 +380,7 @@ class Table(models.Model):  # Game
             # 3. Change game state for players 'in game' to 'start'
             # (when we go to the 'again' function - that function change totally ALL PLAYERS state to 'start')
             self.set_all_in_game_players_state('start')
+
 
     def make_decission(self):
         """After ech deal, the player must make a decission: check/call, raise, pass"""
