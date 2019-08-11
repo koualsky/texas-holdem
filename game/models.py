@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from treys import Card
 
 
 # Later: count and verify 'max_length' fields in my models
@@ -260,6 +261,68 @@ class Table(models.Model):  # Game
         self.pool += how_much
         self.save()
 
+    def fill_deck_by_all_cards(self):
+        """Fill table deck by all cards"""
+
+        deck = [
+            Card.new('Ah'),
+            Card.new('Kh'),
+            Card.new('Qh'),
+            Card.new('Jh'),
+            Card.new('Th'),
+            Card.new('9h'),
+            Card.new('8h'),
+            Card.new('7h'),
+            Card.new('6h'),
+            Card.new('5h'),
+            Card.new('4h'),
+            Card.new('3h'),
+            Card.new('2h'),
+
+            Card.new('As'),
+            Card.new('Ks'),
+            Card.new('Qs'),
+            Card.new('Js'),
+            Card.new('Ts'),
+            Card.new('9s'),
+            Card.new('8s'),
+            Card.new('7s'),
+            Card.new('6s'),
+            Card.new('5s'),
+            Card.new('4s'),
+            Card.new('3s'),
+            Card.new('2s'),
+
+            Card.new('Ad'),
+            Card.new('Kd'),
+            Card.new('Qd'),
+            Card.new('Jd'),
+            Card.new('Td'),
+            Card.new('9d'),
+            Card.new('8d'),
+            Card.new('7d'),
+            Card.new('6d'),
+            Card.new('5d'),
+            Card.new('4d'),
+            Card.new('3d'),
+            Card.new('2d'),
+
+            Card.new('Ac'),
+            Card.new('Kc'),
+            Card.new('Qc'),
+            Card.new('Jc'),
+            Card.new('Tc'),
+            Card.new('9c'),
+            Card.new('8c'),
+            Card.new('7c'),
+            Card.new('6c'),
+            Card.new('5c'),
+            Card.new('4c'),
+            Card.new('3c'),
+            Card.new('2c'),
+        ]
+
+        self.deck = deck
 
     # Game Methods
     def start(self):
@@ -269,6 +332,8 @@ class Table(models.Model):  # Game
 
         if self.how_many_players() > 1 and self.game_state == 'ready':
             self.set_all_available_players_state('start')
+            #self.deck = self.fill_deck()
+            self.fill_deck_by_all_cards() # check. working or not? uzupelnia te pole wszystkimi kartami? chyba powinien byc string co nie? a sprawdzic :p
             self.game_state = 'start'
             self.save()
 

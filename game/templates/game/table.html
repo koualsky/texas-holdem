@@ -3,11 +3,12 @@
 
 {% block content %}
 
-<a href="{% url 'play' %}">Refresh</a>
+<a href="{% url 'play' %}" xmlns:table.biggest_rate>Refresh</a>
 |
 <a href="{% url 'exit' %}">Exit game</a>
-<h4>Pool: {{ table.pool }}</h4>
+<h4>Deck: {{ table.deck }}</h4>
 <h4>Cards on table: {{ table.cards_on_table }}</h4>
+<h4>Pool: {{ table.pool }}</h4>
 <h4>Game state: {{ table.game_state }}</h4>
 
 
@@ -47,33 +48,32 @@
 
         <td style="color: grey;">
 
-             <!-- If you are you
-             AND you don't select decision yet
-             AND is your turn
-             AND you don't have state 'pass'
-             - you can make decission now
+             <!-- If game_state != winner
+                  - make decisions -->
 
-             If I add this condition, user don't see decision buttons but game roulette stops!
-             and request.user.player.state != 'pass'
-             -->
-            {% if request.user.player == player and table.decission == player %}
+            {% if request.user.player.table.game_state != 'winner' %}
 
-                <!-- This button shows when all players have the same round_money -->
-                {% if request.user.player.round_money == table.biggest_rate %}
-                    <a href="{% url 'check' %}">check</a>
+                {% if request.user.player == player and table.decission == player %}
 
-                <!-- This button shows when you have to add to game pool  -->
-                {% else %}
-                    <a href="{% url 'check' %}">call</a>
+                    <!-- This button shows when all players have the same round_money -->
+                    {% if request.user.player.round_money == table.biggest_rate %}
+                        <a href="{% url 'check' %}">check</a>
+
+                    <!-- This button shows when you have to add to game pool  -->
+                    {% else %}
+                        <a href="{% url 'check' %}">call</a>
+                    {% endif %}
+
+                    <form action="/raise/" method="POST" style="float:left;">{% csrf_token %}
+                        <input id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="1" max="{{ request.user.player.money }}" style="width:40px;">
+                        <button type="submit">raise</button>
+                    </form>
+
+                    <a href="{% url 'pass' %}">pass</a>
                 {% endif %}
-
-                <form action="/raise/" method="POST" style="float:left;">{% csrf_token %}
-                    <input id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="1" max="{{ request.user.player.money }}" style="width:40px;">
-                    <button type="submit">raise</button>
-                </form>
-
-                <a href="{% url 'pass' %}">pass</a>
             {% endif %}
+
+
 
             <!-- Show who turn is now -->
             {% if table.decission == player %}
@@ -82,11 +82,13 @@
             {% else %}
                 {{ player.state }}
             {% endif %}
-
         </td>
     </tr>
     {% endfor %}
 
 </table>
+
+{% if request.user.player.table.game_state == 'winner' %}<p>The winner is: ...</p>{% endif %}
+{% if request.user.player.table.game_state == 'winner' %}<a href="{% url 'check' %}">Play again</a>{% endif %}
 
 {% endblock %}
