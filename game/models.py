@@ -619,25 +619,40 @@ class Table(models.Model):  # Game
             player4_score = 0
             scores_list.append(0)
 
-
-        # COS JEST PROBLEM Z WYSWIETLENIE WSZYSTKICH PLAYEROW.....
-
         # 4. Delete all 0 values
         scores_list = filter(lambda a: a!= 0, scores_list)
 
         # 5. Return the best score
         winner = min(scores_list)
 
-        print(player1_score, player2_score)
-
-        # Return Player with the best score
+        # 6. Give pool to the winner and return Player with the best score
         if winner == player1_score:
+            if self.pool > 0:
+                self.player1.money += self.pool
+                self.player1.save()
+                self.pool = 0
+                self.save()
             return self.player1
         if winner == player2_score:
+            if self.pool > 0:
+                self.player2.money += self.pool
+                self.player2.save()
+                self.pool = 0
+                self.save()
             return self.player2
         if winner == player3_score:
+            if self.pool > 0:
+                self.player3.money += self.pool
+                self.player3.save()
+                self.pool = 0
+                self.save()
             return self.player3
         if winner == player4_score:
+            if self.pool > 0:
+                self.player4.money += self.pool
+                self.player4.save()
+                self.pool = 0
+                self.save()
             return self.player4
 
 
@@ -759,6 +774,7 @@ class Table(models.Model):  # Game
             self.give_3()
             self.give_1()
             self.give_1_again()
+            # self.the_winner is call by table.html when game_state = 'winner'
             self.again_reset()
 
             # 3. Change game state for players 'in game' to 'start'

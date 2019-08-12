@@ -6,7 +6,7 @@
 <a href="{% url 'play' %}" xmlns:table.biggest_rate>Refresh</a>
 |
 <a href="{% url 'exit' %}">Exit game</a>
-<h6 style="color: lightgrey;">Deck: {{ table.print_pretty_cards_deck }}</h6>
+<!-- <h6 style="color: lightgrey;">Deck: {{ table.print_pretty_cards_deck }}</h6> -->
 <h4>Cards on table: {{ table.print_pretty_cards_on_table }}</h4>
 <h4>Pool: {{ table.pool }}</h4>
 <h4>Game state: {{ table.game_state }}</h4>
@@ -85,10 +85,14 @@
 
             <!-- Show who turn is now -->
             {% if table.decission == player %}
-                (you!)
+                {% if request.user.player != player %}
+                    ( ! )
+                {% endif %}
             <!-- If you aren't you, show him status -->
             {% else %}
-                {{ player.state }}
+                {% if player.state != 'start' %}
+                    {{ player.state }}
+                {% endif %}
             {% endif %}
         </td>
     </tr>
