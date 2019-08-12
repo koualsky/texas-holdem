@@ -6,8 +6,8 @@
 <a href="{% url 'play' %}" xmlns:table.biggest_rate>Refresh</a>
 |
 <a href="{% url 'exit' %}">Exit game</a>
-<h4>Deck: {{ table.deck }}</h4>
-<h4>Cards on table: {{ table.cards_on_table }}</h4>
+<h6 style="color: lightgrey;">Deck: {{ table.print_pretty_cards_deck }}</h6>
+<h4>Cards on table: {{ table.print_pretty_cards_on_table }}</h4>
 <h4>Pool: {{ table.pool }}</h4>
 <h4>Game state: {{ table.game_state }}</h4>
 
@@ -18,8 +18,8 @@
         <td><!-- Dealer --></td>
         <td>Player</td>
         <td>Money</td>
-        <td>Cards</td>
         <td>Rate</td>
+        <td>Cards</td>
         <td>State</td>
     </tr>
 
@@ -34,15 +34,23 @@
 
         <!-- This part of code is only for styling -->
         {% if player.state == 'out' %}
-        <td style="color: grey;">{{ player }}</td>
-        <td style="color: grey;">{{ player.money }}</td>
-        <td style="color: grey;">{{ player.cards }}</td>
-        <td style="color: grey;">{{ player.round_money }}</td>
+            <td style="color: grey;">{{ player }}</td>
+            <td style="color: grey;">{{ player.money }}</td>
+            <td style="color: grey;">{{ player.round_money }}</td>
+            <td style="color: grey;">{{ player.print_pretty_cards_cards }}</td>
         {% else %}
-        <td>{{ player }}</td>
-        <td>{{ player.money }}</td>
-        <td>{{ player.cards }}</td>
-        <td>{{ player.round_money }}</td>
+            <td>{{ player }}</td>
+            <td>{{ player.money }}</td>
+            <td>{{ player.round_money }}</td>
+            <td>
+                <!-- Player can see only itself cards -->
+                {% if request.user.player == player %}
+                    {{ player.print_pretty_cards_cards }}
+                    {{ player.my_hand }}
+                {% elif player.cards != None %}
+                    [---], [---]
+                {% endif %}
+            </td>
         {% endif %}
 
 
@@ -88,7 +96,8 @@
 
 </table>
 
-{% if request.user.player.table.game_state == 'winner' %}<p>The winner is: ...</p>{% endif %}
+<!-- Hide line below until game state achieve 'winner' state -->
+{% if request.user.player.table.game_state == 'winner' %}<p>THE WINNER IS: {{ table.the_winner }}</p>{% endif %}
 {% if request.user.player.table.game_state == 'winner' %}<a href="{% url 'check' %}">Play again</a>{% endif %}
 
 {% endblock %}

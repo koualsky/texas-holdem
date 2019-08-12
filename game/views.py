@@ -111,17 +111,21 @@ def exit(request):
         table.save()
 
     # 4. If after my leaving in table stay 0 players
-    # - set None to 'dealer, 'small_blind', 'big_blind' fields in Table
+    # - set None to 'dealer, 'small_blind', 'big_blind', deck, cards_on_table
+    # fields in Table
     if table.how_many_players() < 1:
         table.dealer = None
         table.small_blind = None
         table.big_blind = None
+        table.deck = None
+        table.cards_on_table = None
         table.save()
 
-    # 4. Remove Table from my profile
+    # 4. Remove Table and cards from my profile
     request.user.player.table = None
     request.user.player.state = 'out'
     request.user.player.round_money = 0
+    request.user.player.cards = None
     request.user.player.save()
 
     # 5. Redirect to start page

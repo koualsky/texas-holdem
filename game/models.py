@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from treys import Card
+from random import randrange
+from treys import Card, Evaluator
 
 
 # Later: count and verify 'max_length' fields in my models
@@ -13,13 +14,58 @@ class Player(models.Model):
     name = models.OneToOneField(User, on_delete=models.CASCADE, related_name='player', unique=True)
     money = models.IntegerField(default=100)
     round_money = models.IntegerField(default=0)
-    cards = models.CharField(max_length=100)
+    cards = models.CharField(max_length=100, null=True)
     state = models.CharField(max_length=100, default="out")
     # (out, ready, start, check, call, raise, pass)
     table = models.ForeignKey('game.table', on_delete=models.SET_NULL, related_name='tablee', null=True)
 
     def __str__(self):
         return str(self.name)
+
+    def convert_from_string_to_list(self, cards_string):
+        """Input: string, Output: list"""
+
+        output = list(map(int, cards_string.split(',')))
+        return output
+
+    def convert_from_list_to_string(self, cards_list):
+        """Input: list, Output: string"""
+
+        output = ','.join([str(i) for i in cards_list])
+        return output
+
+    def print_pretty_cards_cards(self):
+        """Input: cards, Output: pretty cards"""
+
+        if self.cards != None:
+            cards_list_with_ints = self.convert_from_string_to_list(self.cards)
+            output = Card.print_pretty_cards(cards_list_with_ints)
+            return output
+        else:
+            return ''
+
+    def my_hand(self):
+        """Return name of my best hand"""
+
+        # Cards is on the table
+        if self.table.cards_on_table != None:
+
+            # 1. Get cards from table and from me and convert them to list of int's
+            cards_on_table = self.convert_from_string_to_list(self.table.cards_on_table)
+            cards_on_table = list(map(int, cards_on_table))
+            my_cards = self.convert_from_string_to_list(self.cards)
+            my_cards = list(map(int, my_cards))
+
+            # 2. Show my hand
+            evaluator = Evaluator()
+            score = evaluator.evaluate(cards_on_table, my_cards)
+            classs = evaluator.get_rank_class(score)
+            my_hand = evaluator.class_to_string(classs)
+            return my_hand
+
+        # No cards on table
+        else:
+            return ''
 
 
 class Table(models.Model):  # Game
@@ -261,9 +307,42 @@ class Table(models.Model):  # Game
         self.pool += how_much
         self.save()
 
+    def convert_from_string_to_list(self, cards_string):
+        """Input: string, Output: list"""
+
+        output = list(map(int, cards_string.split(',')))
+        return output
+
+    def convert_from_list_to_string(self, cards_list):
+        """Input: list, Output: string"""
+
+        output = ','.join([str(i) for i in cards_list])
+        return output
+
+    def print_pretty_cards_deck(self):
+        """Input: cards, Output: pretty cards"""
+
+        if self.deck != None:
+            cards_list_with_ints = self.convert_from_string_to_list(self.deck)
+            output = Card.print_pretty_cards(cards_list_with_ints)
+            return output
+        else:
+            return ''
+
+    def print_pretty_cards_on_table(self):
+        """Input: cards, Output: pretty cards"""
+
+        if self.cards_on_table != None:
+            cards_list_with_ints = self.convert_from_string_to_list(self.cards_on_table)
+            output = Card.print_pretty_cards(cards_list_with_ints)
+            return output
+        else:
+            return ''
+
     def fill_deck_by_all_cards(self):
         """Fill table deck by all cards"""
 
+        # Prepare deck of all cards
         deck = [
             Card.new('Ah'),
             Card.new('Kh'),
@@ -322,7 +401,245 @@ class Table(models.Model):  # Game
             Card.new('2c'),
         ]
 
+        # Convert deck of all cards to string
+        deck = self.convert_from_list_to_string(deck)
+
+        # Save deck of all cards to db. Table.deck
         self.deck = deck
+
+    def remove_cards_from_players(self):
+        """Remove all cards from all players"""
+
+        if self.player1 != None:
+            self.player1.cards = None
+            self.player1.save()
+        if self.player2 != None:
+            self.player2.cards = None
+            self.player2.save()
+        if self.player3 != None:
+            self.player3.cards = None
+            self.player3.save()
+        if self.player4 != None:
+            self.player4.cards = None
+            self.player4.save()
+
+    def remove_cards_on_table(self):
+        """Remove cards from table"""
+
+        if self.cards_on_table != None:
+            self.cards_on_table = None
+            self.save()
+
+    def check_players_have_cards(self):
+        """Return False if at least one player have cards"""
+
+        if self.player1 != None and self.player1.cards != None:
+            return False
+        elif self.player2 != None and self.player2.cards != None:
+            return False
+        elif self.player3 != None and self.player3.cards != None:
+            return False
+        elif self.player4 != None and self.player4.cards != None:
+            return False
+        else:
+            return True
+
+    def on_table_is_only_3_cards(self):
+        """Return True if on table is only 3 cards"""
+
+        # 1. get cards from self.cards_on_table if they exist
+        # 2. convert that string to list
+        # 3. count this list
+        # 4. if count == 3 return True, else return False
+
+        if self.cards_on_table != None:
+            cards = self.cards_on_table
+        cards = self.convert_from_string_to_list(cards)
+        count = len(cards)
+        if count == 3:
+            return True
+        return False
+
+    def on_table_is_only_4_cards(self):
+        """Return True if on table is only 4 cards"""
+
+        # 1. get cards from self.cards_on_table if they exist
+        # 2. convert that string to list
+        # 3. count this list
+        # 4. if count == 3 return True, else return False
+
+        if self.cards_on_table != None:
+            cards = self.cards_on_table
+        cards = self.convert_from_string_to_list(cards)
+        count = len(cards)
+        if count == 4:
+            return True
+        return False
+
+    def get_random_cards_from_deck(self, how_many_cards):
+        """
+        Return list of cards if how_many_cards > 1
+        or return string if how_many_cards = 1
+
+        and delete these cards from self.deck
+
+        In how_many_cards enter: 1, 2 or 3
+        """
+
+        # 1. get cards from self.deck
+        # 2. convert string to list
+        # 3. if how many cards == 1:
+        if how_many_cards == 1:
+
+            # a) get cards list from table.deck
+            cards_list = self.convert_from_string_to_list(self.deck)
+
+            # b) get random integer from len(cards_list) range,
+            #    get card with this index from cards_list
+            #    add this card to random_cards list
+            #    delete this position from cards_list
+
+            int_1 = randrange(0, len(cards_list))
+            int_1_card = cards_list[int_1]
+            cards_list.remove(int_1_card)
+
+            # c) convert and save new self.deck cards
+            self.deck = self.convert_from_list_to_string(cards_list)
+            self.save()
+
+            # d) return this string
+            return str(int_1_card)
+
+        # 4. if how many cards == 2:
+        if how_many_cards == 2:
+
+            # a) get cards list from table.deck
+            cards_list = self.convert_from_string_to_list(self.deck)
+
+            # b) get random integer from len(cards_list) range,
+            #    get card with this index from cards_list
+            #    add this card to random_cards list
+            #    delete this position from cards_list
+            random_cards = []
+
+            int_1 = randrange(0, len(cards_list))
+            int_1_card = cards_list[int_1]
+            random_cards.append(int_1_card)
+            cards_list.remove(int_1_card)
+
+            int_2 = randrange(0, len(cards_list))
+            int_2_card = cards_list[int_2]
+            random_cards.append(int_2_card)
+            cards_list.remove(int_2_card)
+
+            # c) convert and save new self.deck cards
+            self.deck = self.convert_from_list_to_string(cards_list)
+            self.save()
+
+            # d) return this string
+            return random_cards
+
+        # 5. if how many cards == 3:
+        if how_many_cards == 3:
+
+            # a) get cards list from table.deck
+            cards_list = self.convert_from_string_to_list(self.deck)
+
+            # b) get random integer from len(cards_list) range,
+            #    get card with this index from cards_list
+            #    add this card to random_cards list
+            #    delete this position from cards_list
+            random_cards = []
+
+            int_1 = randrange(0, len(cards_list))
+            int_1_card = cards_list[int_1]
+            random_cards.append(int_1_card)
+            cards_list.remove(int_1_card)
+
+            int_2 = randrange(0, len(cards_list))
+            int_2_card = cards_list[int_2]
+            random_cards.append(int_2_card)
+            cards_list.remove(int_2_card)
+
+            int_3 = randrange(0, len(cards_list))
+            int_3_card = cards_list[int_3]
+            random_cards.append(int_3_card)
+            cards_list.remove(int_3_card)
+
+            # c) convert and save new self.deck cards
+            self.deck = self.convert_from_list_to_string(cards_list)
+            self.save()
+
+            # d) return this string
+            return random_cards
+
+    def the_winner(self):
+        """Return winner in this table"""
+
+        evaluator = Evaluator()
+
+        # 1. Get cards from cards_on_table and convert them to list of int's
+        cards_on_table = self.convert_from_string_to_list(self.cards_on_table)
+        # cards_on_table = list(map(int, cards_on_table))
+
+        # 2. List with scores
+        scores_list = []
+
+        # 3. Get cards from each player and convert them to list of integers
+        if self.player1 != None:
+            player1_cards = self.convert_from_string_to_list(self.player1.cards)
+            player1_cards = list(map(int, player1_cards))
+            player1_score = evaluator.evaluate(cards_on_table, player1_cards)
+            scores_list.append(player1_score)
+        else:
+            player1_score = 0
+            scores_list.append(0)
+        if self.player2 != None:
+            player2_cards = self.convert_from_string_to_list(self.player2.cards)
+            player2_cards = list(map(int, player2_cards))
+            player2_score = evaluator.evaluate(cards_on_table, player2_cards)
+            scores_list.append(player2_score)
+        else:
+            player2_score = 0
+            scores_list.append(0)
+        if self.player3 != None:
+            player3_cards = self.convert_from_string_to_list(self.player3.cards)
+            player3_cards = list(map(int, player3_cards))
+            player3_score = evaluator.evaluate(cards_on_table, player3_cards)
+            scores_list.append(player3_score)
+        else:
+            player3_score = 0
+            scores_list.append(0)
+        if self.player4 != None:
+            player4_cards = self.convert_from_string_to_list(self.player4.cards)
+            player4_cards = list(map(int, player4_cards))
+            player4_score = evaluator.evaluate(cards_on_table, player4_cards)
+            scores_list.append(player4_score)
+        else:
+            player4_score = 0
+            scores_list.append(0)
+
+
+        # COS JEST PROBLEM Z WYSWIETLENIE WSZYSTKICH PLAYEROW.....
+
+        # 4. Delete all 0 values
+        scores_list = filter(lambda a: a!= 0, scores_list)
+
+        # 5. Return the best score
+        winner = min(scores_list)
+
+        print(player1_score, player2_score)
+
+        # Return Player with the best score
+        if winner == player1_score:
+            return self.player1
+        if winner == player2_score:
+            return self.player2
+        if winner == player3_score:
+            return self.player3
+        if winner == player4_score:
+            return self.player4
+
 
     # Game Methods
     def start(self):
@@ -332,8 +649,8 @@ class Table(models.Model):  # Game
 
         if self.how_many_players() > 1 and self.game_state == 'ready':
             self.set_all_available_players_state('start')
-            #self.deck = self.fill_deck()
-            self.fill_deck_by_all_cards() # check. working or not? uzupelnia te pole wszystkimi kartami? chyba powinien byc string co nie? a sprawdzic :p
+            self.fill_deck_by_all_cards()
+            self.cards_on_table = None
             self.game_state = 'start'
             self.save()
 
@@ -438,9 +755,11 @@ class Table(models.Model):  # Game
             self.next_game_state()
 
             # 2. Call function by game_state (look up)
-            # give_2()
-            # give_3()
-            # ...
+            self.give_2()
+            self.give_3()
+            self.give_1()
+            self.give_1_again()
+            self.again_reset()
 
             # 3. Change game state for players 'in game' to 'start'
             # (when we go to the 'again' function - that function change totally ALL PLAYERS state to 'start')
@@ -458,36 +777,107 @@ class Table(models.Model):  # Game
         # timer - if you dont make a decission in 10 sek. you automatically get status: 'ingame'
         pass
 
+    def give_2(self):
+        """
+        Give 2 cards to each active player if:
+        - game state = give 2
+        - each player have None cards
+        """
+
+        if self.game_state == 'give_2' and self.check_players_have_cards():
+
+            # Player1 (if exist)
+            if self.player1 != None:
+                cards_2 = self.get_random_cards_from_deck(2)
+                self.player1.cards = self.convert_from_list_to_string(cards_2)
+                self.player1.save()
+
+            # Player2 (if exist)
+            if self.player2 != None:
+                cards_2 = self.get_random_cards_from_deck(2)
+                self.player2.cards = self.convert_from_list_to_string(cards_2)
+                self.player2.save()
+
+            # Player3 (if exist)
+            if self.player3 != None:
+                cards_2 = self.get_random_cards_from_deck(2)
+                self.player3.cards = self.convert_from_list_to_string(cards_2)
+                self.player3.save()
+
+            # Player4 (if exist)
+            if self.player4 != None:
+                cards_2 = self.get_random_cards_from_deck(2)
+                self.player4.cards = self.convert_from_list_to_string(cards_2)
+                self.player4.save()
+
     def give_3(self):
-        """Give 3 cards to the table"""
+        """
+        Give 3 cards to the table if:
+        - game state = give 3
+        - on table is no cards
+        """
 
-        # te funkcje maja na poczatku 'if' i tylko czekaja na spelniony
-        # warunek czyli aby table.game_state osiagnal ich stan.
-        # bo po osiagnieciu tego stanu automatycznie sie zalaczaja
-        #
-        # a kiedy osiagna ten stan? jak funkcja make_decission() (checker)
-        # uzna ze wszyscy gracze wrzucili ta sama ilosc $ do puli
-
-        pass
+        if self.game_state == 'give_3' and self.cards_on_table == None:
+            cards_3 = self.get_random_cards_from_deck(3)
+            self.cards_on_table = self.convert_from_list_to_string(cards_3)
+            self.save()
 
     def give_1(self):
-        """Give 1 card to the table"""
-        pass
+        """
+        Give 1 card to the table if:
+        - game state = give 1
+        - on table is only 3 cards
+        """
+
+        if self.game_state == 'give_1' and self.on_table_is_only_3_cards():
+
+            # 1. get cards from cards on table andconvert them to list
+            # 2. get random card from deck
+            # 3. add to list 1 random card
+            # 4. save to cards on table new list converted to string
+
+            new_cards = self.convert_from_string_to_list(self.cards_on_table)
+            random_card = self.get_random_cards_from_deck(1)
+            new_cards.append(random_card)
+            self.cards_on_table = self.convert_from_list_to_string(new_cards)
+            self.save()
 
     def give_1_again(self):
-        """Give 1 card to the table"""
-        pass
+        """
+        Give 1 card to the table if:
+        - game state = give 1 again
+        - on table is only 4 cards
+        """
 
-    def who_win(self):
+        if self.game_state == 'give_1_again' and self.on_table_is_only_4_cards():
+            # 1. get cards from cards on table andconvert them to list
+            # 2. get random card from deck
+            # 3. add to list 1 random card
+            # 4. save to cards on table new list converted to string
+
+            new_cards = self.convert_from_string_to_list(self.cards_on_table)
+            random_card = self.get_random_cards_from_deck(1)
+            new_cards.append(random_card)
+            self.cards_on_table = self.convert_from_list_to_string(new_cards)
+            self.save()
+
+    def again_reset(self):
         """Determines the winner and gives him all the money from the pool."""
-        # check who win
-        # give him all money from the pool
-        # again?: (10sec. -> then -> no('out')) yes: you play on ('ingame'), no: ('out')
 
-        # delete from table and player.table field if no decission... (timer)
+        if self.game_state == 'again':
+            # check who win
+            # give him all money from the pool
+            # again?: (10sec. -> then -> no('out'))
+            # yes: you play on ('ingame'), no: ('out')
 
-        # self.decission = None
+            # delete from table and player.table field if no decission... (timer)
 
-        # end_game()
-        # start game again: zero()
-        pass
+            # self.decission = None
+
+            # end_game()
+            # start game again: zero()
+
+            # 9. Clear cards on table, players cards,
+            # (deck no, because soon it will be full with new full deck)
+            self.remove_cards_from_players()
+            self.remove_cards_on_table()
