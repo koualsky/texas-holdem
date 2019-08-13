@@ -44,7 +44,7 @@
             <td>{{ player.round_money }}</td>
             <td>
                 <!-- Player can see only itself cards -->
-                {% if request.user.player == player %}
+                {% if request.user.player == player or table.game_state == 'winner' %}
                     {{ player.print_pretty_cards_cards }}
                     {{ player.my_hand }}
                 {% elif player.cards != None %}

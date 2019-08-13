@@ -4,9 +4,6 @@ from random import randrange
 from treys import Card, Evaluator
 
 
-# Later: count and verify 'max_length' fields in my models
-
-
 class Player(models.Model):
     """Attributes and methods for 'Player'"""
 
@@ -15,8 +12,8 @@ class Player(models.Model):
     money = models.IntegerField(default=100)
     round_money = models.IntegerField(default=0)
     cards = models.CharField(max_length=100, null=True)
-    state = models.CharField(max_length=100, default="out")
     # (out, ready, start, check, call, raise, pass)
+    state = models.CharField(max_length=100, default="out")
     table = models.ForeignKey('game.table', on_delete=models.SET_NULL, related_name='tablee', null=True)
 
     def __str__(self):
@@ -232,6 +229,8 @@ class Table(models.Model):  # Game
                 player.save()
 
     def start_game_again(self):
+        """Reset game and start them again with the same players"""
+
         if self.game_state == 'again':
 
             # 1. Set to all players (not only 'in game') in table state = 'start'
@@ -246,6 +245,11 @@ class Table(models.Model):  # Game
 
             # 4. Set all players round_money to 0
             self.all_players_round_money_to_zero()
+
+            # 5. Clear cards on table and players cards
+            # (deck no, because soon it will be full with new full deck)
+            self.remove_cards_from_players()
+            self.remove_cards_on_table()
 
     def next_game_state(self):
         """Change current game state to the next from the game path"""
@@ -775,23 +779,11 @@ class Table(models.Model):  # Game
             self.give_1()
             self.give_1_again()
             # self.the_winner is call by table.html when game_state = 'winner'
-            self.again_reset()
+            # self.start_game_again is call by self.next_game_state when game_state = 'again
 
             # 3. Change game state for players 'in game' to 'start'
             # (when we go to the 'again' function - that function change totally ALL PLAYERS state to 'start')
             self.set_all_in_game_players_state('start')
-
-
-    def make_decission(self):
-        """After ech deal, the player must make a decission: check/call, raise, pass"""
-
-        # check (if no one raise pool)
-        # call (automatically add the requires minimum amount of money to the pool)
-        # raise (you can raise pool)
-        # pass (change your status to 'pass' - you don't allow to make changes in this game)
-
-        # timer - if you dont make a decission in 10 sek. you automatically get status: 'ingame'
-        pass
 
     def give_2(self):
         """
@@ -876,24 +868,3 @@ class Table(models.Model):  # Game
             new_cards.append(random_card)
             self.cards_on_table = self.convert_from_list_to_string(new_cards)
             self.save()
-
-    def again_reset(self):
-        """Determines the winner and gives him all the money from the pool."""
-
-        if self.game_state == 'again':
-            # check who win
-            # give him all money from the pool
-            # again?: (10sec. -> then -> no('out'))
-            # yes: you play on ('ingame'), no: ('out')
-
-            # delete from table and player.table field if no decission... (timer)
-
-            # self.decission = None
-
-            # end_game()
-            # start game again: zero()
-
-            # 9. Clear cards on table, players cards,
-            # (deck no, because soon it will be full with new full deck)
-            self.remove_cards_from_players()
-            self.remove_cards_on_table()
