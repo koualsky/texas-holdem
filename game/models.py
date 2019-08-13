@@ -169,7 +169,7 @@ class Table(models.Model):  # Game
         return True
 
     def set_all_available_players_state(self, state):
-        """Set 'start' state to player if player exist"""
+        """Set 'state' to player if player exist"""
 
         if self.player1 is not None:
             self.player1.state = state
@@ -185,7 +185,7 @@ class Table(models.Model):  # Game
             self.player4.save()
 
     def set_all_in_game_players_state(self, state):
-        """Set 'start' state to all players 'in game'"""
+        """Set 'start' state to all players 'in game', means all withous 'pass' or 'out' state"""
 
         if self.player1 is not None and self.player1.state != 'out' and self.player1.state != 'pass':
             self.player1.state = state
@@ -211,6 +211,8 @@ class Table(models.Model):  # Game
             return players_list[indx + 1]
 
     def add_player(self, player):
+        """Add Player to free space in table"""
+
         if self.player1 == None:
             self.player1 = player
         elif self.player2 == None:
@@ -276,7 +278,7 @@ class Table(models.Model):  # Game
 
             # a) If game state is 'small_blind' and in the game is only 2 active
             #    players: skip +2, not +1 game state
-            if current_game_state == 'small_blind' and self.all_players_without_out_state():
+            if current_game_state == 'small_blind' and len(self.all_players_without_out_state()) == 2:
                 self.game_state = game_path[indx + 2]
 
             # b) else: +1
@@ -482,8 +484,8 @@ class Table(models.Model):  # Game
 
     def get_random_cards_from_deck(self, how_many_cards):
         """
-        Return list of cards if how_many_cards > 1
-        or return string if how_many_cards = 1
+        Return list of cards (int's) if how_many_cards > 1
+        or return string (str) if how_many_cards = 1
 
         and delete these cards from self.deck
 

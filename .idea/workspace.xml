@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bf643e74-0ac6-496f-88f1-733da3810ea5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/templates/game/table.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/templates/game/table.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,14 +15,14 @@
     <favorites_list name="texas-holdem" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.40464932">
+    <splitter split-orientation="horizontal" split-proportion="0.3963751">
       <split-first>
         <leaf>
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/game/models.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="380">
-                  <caret line="99" selection-start-line="99" selection-end-line="99" />
+                <state relative-caret-position="331">
+                  <caret line="661" column="31" lean-forward="true" selection-start-line="661" selection-start-column="31" selection-end-line="661" selection-end-column="31" />
                   <folding>
                     <element signature="e#0#28#0" expanded="true" />
                     <element signature="e#170#2266#0" />
@@ -35,6 +32,7 @@
                     <element signature="e#1157#1438#0" />
                     <element signature="e#1471#2266#0" />
                     <element signature="e#3495#3762#0" />
+                    <element signature="e#3829#4058#0" />
                     <element signature="e#4095#4353#0" />
                     <element signature="e#4407#4732#0" />
                     <element signature="e#4787#5131#0" />
@@ -42,9 +40,9 @@
                     <element signature="e#5636#5834#0" />
                     <element signature="e#5912#6298#0" />
                     <element signature="e#6362#6844#0" />
-                    <element signature="e#6906#7647#0" />
+                    <element signature="e#6900#7641#0" />
                     <element signature="e#7712#7962#0" />
-                    <element signature="e#8006#8271#0" />
+                    <element signature="e#8009#8274#0" />
                     <element signature="e#8328#8554#0" />
                     <element signature="e#8596#9318#0" />
                     <element signature="e#9359#10585#0" />
@@ -83,14 +81,43 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/game/tests.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="342">
-                  <caret line="97" selection-start-line="97" selection-end-line="97" />
+                <state relative-caret-position="711">
+                  <caret line="824" column="73" lean-forward="true" selection-start-line="824" selection-start-column="73" selection-end-line="824" selection-end-column="73" />
                   <folding>
                     <element signature="e#0#32#0" expanded="true" />
                     <element signature="e#227#724#0" />
                     <element signature="e#782#1230#0" />
                     <element signature="e#1285#1798#0" />
                     <element signature="e#1836#2986#0" />
+                    <element signature="e#3144#3599#0" />
+                    <element signature="e#3641#4105#0" />
+                    <element signature="e#4211#4854#0" />
+                    <element signature="e#4964#5182#0" />
+                    <element signature="e#5824#6624#0" />
+                    <element signature="e#6718#7726#0" />
+                    <element signature="e#7811#8832#0" />
+                    <element signature="e#8989#10012#0" />
+                    <element signature="e#10072#10657#0" />
+                    <element signature="e#10192#10833#0" />
+                    <element signature="e#10929#11389#0" />
+                    <element signature="e#12476#13296#0" />
+                    <element signature="e#13478#14554#0" />
+                    <element signature="e#12356#13630#0" />
+                    <element signature="e#13868#15337#0" />
+                    <element signature="e#13827#15251#0" />
+                    <element signature="e#18765#19630#0" />
+                    <element signature="e#19683#20067#0" />
+                    <element signature="e#20150#20647#0" />
+                    <element signature="e#20705#21153#0" />
+                    <element signature="e#21196#21708#0" />
+                    <element signature="e#21728#22202#0" />
+                    <element signature="e#22285#22289#0" />
+                    <element signature="e#22360#23574#0" />
+                    <element signature="e#23634#24848#0" />
+                    <element signature="e#23974#24944#0" />
+                    <element signature="e#25061#26104#0" />
+                    <element signature="e#25631#26146#0" />
+                    <element signature="e#26227#27904#0" />
                   </folding>
                 </state>
               </provider>
@@ -222,6 +249,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Unittests for game.tests.PlayerModelTest.test_convert_from_list_to_string" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="texas-holdem" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;game.tests.PlayerModelTest.test_convert_from_list_to_string&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Unittests for game.tests.TableModelTest" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="texas-holdem" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -255,9 +296,11 @@
       <item itemvalue="Python tests.Unittests for game.tests.PlayerModelTest" />
       <item itemvalue="Python tests.Unittests for game.tests.TableModelTest" />
       <item itemvalue="Python tests.Unittests in tests.py" />
+      <item itemvalue="Python tests.Unittests for game.tests.PlayerModelTest.test_convert_from_list_to_string" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests for game.tests.PlayerModelTest.test_convert_from_list_to_string" />
         <item itemvalue="Python tests.Unittests for game.tests.PlayerModelTest" />
         <item itemvalue="Python tests.Unittests in tests.py" />
         <item itemvalue="Python tests.Unittests for game.tests.TableModelTest" />
@@ -278,9 +321,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittests_for_game_tests_TableModelTest - 2019.08.13 at 12h 14m 37s.xml">
-      <configuration name="Unittests for game.tests.TableModelTest" configurationId="tests" />
-    </history-entry>
     <history-entry file="Unittests_for_game_tests_TableModelTest - 2019.08.13 at 12h 14m 38s.xml">
       <configuration name="Unittests for game.tests.TableModelTest" configurationId="tests" />
     </history-entry>
@@ -308,6 +348,9 @@
     <history-entry file="Unittests_for_game_tests_PlayerModelTest - 2019.08.13 at 12h 34m 11s.xml">
       <configuration name="Unittests for game.tests.PlayerModelTest" configurationId="tests" />
     </history-entry>
+    <history-entry file="Unittests_for_game_tests_PlayerModelTest_test_convert_from_list_to_string - 2019.08.13 at 14h 38m 38s.xml">
+      <configuration name="Unittests for game.tests.PlayerModelTest.test_convert_from_list_to_string" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
@@ -324,14 +367,14 @@
     <layout>
       <window_info id="Favorites" order="0" sideWeight="0.3654224" side_tool="true" weight="0.13262099" />
       <window_info id="Structure" order="1" sideWeight="0.3647343" side_tool="true" weight="0.08548083" />
-      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.63457763" visible="true" weight="0.08366376" />
+      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.63457763" weight="0.08313633" />
       <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.49968573" weight="0.20094192" />
       <window_info anchor="bottom" id="Event Log" order="1" sideWeight="0.5009428" side_tool="true" weight="0.32967034" />
       <window_info anchor="bottom" id="Python Console" order="2" weight="0.21193093" />
       <window_info anchor="bottom" id="Message" order="3" />
       <window_info anchor="bottom" id="Find" order="4" />
       <window_info anchor="bottom" id="Version Control" order="5" weight="0.21193093" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.4990572" visible="true" weight="0.32134658" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.4990572" visible="true" weight="0.33205816" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.39952904" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
@@ -405,13 +448,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/game/models.py</url>
-          <line>99</line>
-          <option name="timeStamp" value="2" />
+          <line>581</line>
+          <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/game/tests.py</url>
-          <line>62</line>
-          <option name="timeStamp" value="3" />
+          <line>821</line>
+          <option name="timeStamp" value="38" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -558,10 +601,53 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/game/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="711">
+          <caret line="824" column="73" lean-forward="true" selection-start-line="824" selection-start-column="73" selection-end-line="824" selection-end-column="73" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#227#724#0" />
+            <element signature="e#782#1230#0" />
+            <element signature="e#1285#1798#0" />
+            <element signature="e#1836#2986#0" />
+            <element signature="e#3144#3599#0" />
+            <element signature="e#3641#4105#0" />
+            <element signature="e#4211#4854#0" />
+            <element signature="e#4964#5182#0" />
+            <element signature="e#5824#6624#0" />
+            <element signature="e#6718#7726#0" />
+            <element signature="e#7811#8832#0" />
+            <element signature="e#8989#10012#0" />
+            <element signature="e#10072#10657#0" />
+            <element signature="e#10192#10833#0" />
+            <element signature="e#10929#11389#0" />
+            <element signature="e#12476#13296#0" />
+            <element signature="e#13478#14554#0" />
+            <element signature="e#12356#13630#0" />
+            <element signature="e#13868#15337#0" />
+            <element signature="e#13827#15251#0" />
+            <element signature="e#18765#19630#0" />
+            <element signature="e#19683#20067#0" />
+            <element signature="e#20150#20647#0" />
+            <element signature="e#20705#21153#0" />
+            <element signature="e#21196#21708#0" />
+            <element signature="e#21728#22202#0" />
+            <element signature="e#22285#22289#0" />
+            <element signature="e#22360#23574#0" />
+            <element signature="e#23634#24848#0" />
+            <element signature="e#23974#24944#0" />
+            <element signature="e#25061#26104#0" />
+            <element signature="e#25631#26146#0" />
+            <element signature="e#26227#27904#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/game/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="99" selection-start-line="99" selection-end-line="99" />
+        <state relative-caret-position="331">
+          <caret line="661" column="31" lean-forward="true" selection-start-line="661" selection-start-column="31" selection-end-line="661" selection-end-column="31" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
             <element signature="e#170#2266#0" />
@@ -571,6 +657,7 @@
             <element signature="e#1157#1438#0" />
             <element signature="e#1471#2266#0" />
             <element signature="e#3495#3762#0" />
+            <element signature="e#3829#4058#0" />
             <element signature="e#4095#4353#0" />
             <element signature="e#4407#4732#0" />
             <element signature="e#4787#5131#0" />
@@ -578,9 +665,9 @@
             <element signature="e#5636#5834#0" />
             <element signature="e#5912#6298#0" />
             <element signature="e#6362#6844#0" />
-            <element signature="e#6906#7647#0" />
+            <element signature="e#6900#7641#0" />
             <element signature="e#7712#7962#0" />
-            <element signature="e#8006#8271#0" />
+            <element signature="e#8009#8274#0" />
             <element signature="e#8328#8554#0" />
             <element signature="e#8596#9318#0" />
             <element signature="e#9359#10585#0" />
@@ -607,20 +694,6 @@
             <element signature="e#29057#29401#0" />
             <element signature="e#29433#30138#0" />
             <element signature="e#30176#30892#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game/tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="97" selection-start-line="97" selection-end-line="97" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#227#724#0" />
-            <element signature="e#782#1230#0" />
-            <element signature="e#1285#1798#0" />
-            <element signature="e#1836#2986#0" />
           </folding>
         </state>
       </provider>
