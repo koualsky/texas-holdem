@@ -96,7 +96,7 @@ class Table(models.Model):  # Game
             + ')'
         )
 
-    # Additional Methods
+    # Additional methods
     def how_many_players(self):
         """Count how many players is in the particular game"""
 
@@ -257,6 +257,8 @@ class Table(models.Model):  # Game
         """Change current game state to the next from the game path"""
 
         game_path = ['ready',
+                     # 'start' - add by players
+                     # 'dealer' - add by method if 2 player is in the game
                      'small_blind',
                      'big_blind',
                      'give_2',
@@ -662,7 +664,7 @@ class Table(models.Model):  # Game
             return self.player4
 
 
-    # Game Methods
+    # Game methods
     def start(self):
         """Set 'start' state for table and available players in table 
         if number of players in this table is > 1

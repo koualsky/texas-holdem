@@ -98,6 +98,7 @@ class PlayerModelTest(TestCase):
 class TableModelTest(TestCase):
     """Test all Table methods"""
 
+    # Additional methods
     def test_how_many_players(self):
         """
         Input: none
@@ -818,8 +819,286 @@ class TableModelTest(TestCase):
         self.assertNotIn(str(result3[0]), table3.deck)
         self.assertNotIn(str(result3[1]), table3.deck)
         self.assertNotIn(str(result3[2]), table3.deck)
-
+    
     def test_the_winner(self):
         """Return winner in this table"""
 
+        # Arrange
+        cards1 = str(Card.new('2s')) + ',' + str(Card.new('3s'))
+        cards2 = str(Card.new('4h')) + ',' + str(Card.new('5d'))
+        cards3 = str(Card.new('6d')) + ',' + str(Card.new('7h'))
+        cards4 = str(Card.new('As')) + ',' + str(Card.new('Ks'))
+        cards_on_table = str(Card.new('Qs')) + ',' \
+                         + str(Card.new('Js')) + ','\
+                         + str(Card.new('Ts')) + ','\
+                         + str(Card.new('2d')) + ','\
+                         + str(Card.new('3d'))
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1, cards=cards1)
+        player1.save()
+        player2 = Player(name=us2, cards=cards2)
+        player2.save()
+        player3 = Player(name=us3, cards=cards3)
+        player3.save()
+        player4 = Player(name=us4, cards=cards4)
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      cards_on_table=cards_on_table
+                      )
+
+        # Act
+        the_winner = table.the_winner()
+        #print(the_winner)
+
+        # Assertion
+        self.assertEqual(the_winner, player4)
+
         # write tu all table, players, cards and in the end evaluating...
+
+    # Game methods
+    def test_start(self):
+        """
+        Set 'start' state for table and available players in table
+        if number of players in this table is > 1
+        and state of game is 'ready'
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1, state='check')
+        player1.save()
+        player2 = Player(name=us2, state='pass')
+        player2.save()
+        player3 = Player(name=us3, state='raise')
+        player3.save()
+        player4 = Player(name=us4, state='out')
+        player4.save()
+        table = Table(player1=player1)
+
+        # Assertions & Acts
+
+        # Only 1 player in table (table.start() should not working)
+        self.assertEqual(table.game_state, 'ready')
+        table.start()
+        self.assertNotEqual(table.game_state, 'start')
+
+        # 4 players in table (table.start() should works)
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4
+                      )
+        self.assertEqual(table.game_state, 'ready')
+        self.assertEqual(player1.state, 'check')
+        self.assertEqual(player2.state, 'pass')
+        self.assertEqual(player3.state, 'raise')
+        self.assertEqual(player4.state, 'out')
+        table.start()
+        self.assertEqual(table.game_state, 'start')
+        self.assertEqual(player1.state, 'start')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+    def test_dealer_button(self):
+        """
+        Give dealer button to first player or next of previous gamer
+
+        Dealer is always awarded to the first player if the table.dealer field
+        is empty or to the next player inthe table.dealer field
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1, state='start')
+        player1.save()
+        player2 = Player(name=us2, state='start')
+        player2.save()
+        player3 = Player(name=us3, state='start')
+        player3.save()
+        player4 = Player(name=us4, state='start')
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='start'
+                      )
+
+        # Act & Assertion
+        table.dealer_button()
+        self.assertEqual(table.dealer, player1)
+
+        table.game_state = 'start'
+        table.dealer_button()
+        self.assertEqual(table.dealer, player2)
+
+        table.game_state = 'start'
+        table.dealer_button()
+        self.assertEqual(table.dealer, player3)
+
+        table.game_state = 'start'
+        table.dealer_button()
+        self.assertEqual(table.dealer, player4)
+
+        table.game_state = 'start'
+        table.dealer_button()
+        self.assertEqual(table.dealer, player1)
+
+    def test_take_small_blind(self):
+        """
+        Take small blind from the next one from 'dealer player'
+
+        Small blind is always awarded to the next player from
+        the table.dealer field
+        """
+
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1, state='start')
+        player1.save()
+        player2 = Player(name=us2, state='start')
+        player2.save()
+        player3 = Player(name=us3, state='start')
+        player3.save()
+        player4 = Player(name=us4, state='start')
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='dealer',
+                      dealer=player1
+                      )
+
+        # Act & Assertion
+        table.take_small_blind()
+        self.assertEqual(table.small_blind, player2)
+
+        table.game_state = 'dealer'
+        table.take_small_blind()
+        self.assertEqual(table.small_blind, player2)
+
+    def test_take_big_blind(self):
+        """
+        Take small blind from the next one from 'dealer player'
+
+        Big blind is always awarded if players in table > 1
+        - to the next player from the table.small_blind field
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1, state='start')
+        player1.save()
+        player2 = Player(name=us2, state='start')
+        player2.save()
+        player3 = Player(name=us3, state='start')
+        player3.save()
+        player4 = Player(name=us4, state='start')
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='small_blind',
+                      dealer=player1,
+                      small_blind=player2
+                      )
+
+        # Act & Assertion
+        table.take_big_blind()
+        self.assertEqual(table.big_blind, player3)
+
+        table.game_state = 'small_blind'
+        table.dealer = player2
+        table.small_blind = player3
+        table.take_big_blind()
+        self.assertEqual(table.big_blind, player4)
+
+    def test_make_turn(self):
+        """That function is call in every game page overload"""
+
+        # Arrange
+        cards1 = str(Card.new('As')) + ',' + str(Card.new('9s'))
+        cards2 = str(Card.new('Ah')) + ',' + str(Card.new('9h'))
+        cards3 = str(Card.new('Ad')) + ',' + str(Card.new('9d'))
+        cards4 = str(Card.new('Ac')) + ',' + str(Card.new('9c'))
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1, state='check', round_money=10, cards=cards1)
+        player1.save()
+        player2 = Player(name=us2, state='check', round_money=10, cards=cards2)
+        player2.save()
+        player3 = Player(name=us3, state='check', round_money=10, cards=cards3)
+        player3.save()
+        player4 = Player(name=us4, state='check', round_money=10, cards=cards4)
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='ready'
+                      )
+
+        # Acts & Assertions
+        table.start()
+        table.dealer_button()
+        self.assertEqual(table.game_state, 'dealer')
+
+        table.take_small_blind()
+        self.assertEqual(table.game_state, 'small_blind')
+
+        table.take_big_blind()
+        self.assertEqual(table.game_state, 'big_blind')
+
+        table.make_turn()
+        table.make_turn()
+        print(table.game_state) # should be 'give_2' state...
+        #self.assertEqual(table.game_state, 'give_2')
+        # table.make_turn()
