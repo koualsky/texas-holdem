@@ -157,11 +157,12 @@ class Table(models.Model):  # Game
         """Return list with all players in this table"""
 
         players_list = []
-        for player in [self.player1,
-                       self.player2,
-                       self.player3,
-                       self.player4
-                       ]:
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4
+        ]:
             if player != None:
                 players_list.append(player)
         return players_list
@@ -170,11 +171,12 @@ class Table(models.Model):  # Game
         """Return list with all players with 'start' state in this table"""
 
         players_list = []
-        for player in [self.player1,
-                       self.player2,
-                       self.player3,
-                       self.player4
-                       ]:
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4
+        ]:
             if player != None:
                 if player.state == 'start':
                     players_list.append(player)
@@ -185,11 +187,12 @@ class Table(models.Model):  # Game
         'in game'."""
 
         players_list = []
-        for player in [self.player1,
-                       self.player2,
-                       self.player3,
-                       self.player4
-                       ]:
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4
+        ]:
             if player != None:
                 if player.state != 'out':
                     players_list.append(player)
@@ -200,11 +203,12 @@ class Table(models.Model):  # Game
         state in this table. 'in game'."""
 
         players_list = []
-        for player in [self.player1,
-                       self.player2,
-                       self.player3,
-                       self.player4
-                       ]:
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4
+        ]:
             if player != None:
                 if player.state != 'out' and player.state != 'pass':
                     players_list.append(player)
@@ -295,11 +299,12 @@ class Table(models.Model):  # Game
     def all_players_round_money_to_zero(self):
         """Set round_money to zero for all players"""
 
-        for player in [self.player1,
-                       self.player2,
-                       self.player3,
-                       self.player4
-                       ]:
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4
+        ]:
             if player != None:
                 player.round_money = 0
                 player.save()
@@ -330,18 +335,19 @@ class Table(models.Model):  # Game
     def next_game_state(self):
         """Change current game state to the next from the game path"""
 
-        game_path = ['ready',
-                     # 'start' - add by players
-                     # 'dealer' - add by method if 2 player is in the game
-                     'small_blind',
-                     'big_blind',
-                     'give_2',
-                     'give_3',
-                     'give_1',
-                     'give_1_again',
-                     'winner',
-                     'again'
-                     ]
+        game_path = [
+            'ready',
+            # 'start' - add by players
+            # 'dealer' - add by method if 2 player is in the game
+            'small_blind',
+            'big_blind',
+            'give_2',
+            'give_3',
+            'give_1',
+            'give_1_again',
+            'winner',
+            'again'
+        ]
 
         # 1. Current game state and index of current game state from game_path
         current_game_state = self.game_state
@@ -372,11 +378,12 @@ class Table(models.Model):  # Game
          biggest value"""
 
         players_values = []
-        for player in [self.player1,
-                       self.player2,
-                       self.player3,
-                       self.player4
-                       ]:
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4
+        ]:
             if player != None:
                 players_values.append(player.round_money)
 
@@ -805,9 +812,10 @@ class Table(models.Model):  # Game
 
             # 2. Save to decission field 'player' next from 'small blind'
             players_with_start = self.all_players_with_start_state()
-            self.decission = self.return_next(players_with_start,
-                                              self.small_blind
-                                              )
+            self.decission = self.return_next(
+                players_with_start,
+                self.small_blind
+            )
 
             # 3. Take 'small blind' from 'small_blind' player
             self.pool += 1
@@ -839,8 +847,10 @@ class Table(models.Model):  # Game
 
                 # 2. Save to decission field 'player' next from 'small blind'
                 players_with_start = self.all_players_with_start_state()
-                self.decission = self.return_next(players_with_start,
-                                                  self.big_blind)
+                self.decission = self.return_next(
+                    players_with_start,
+                    self.big_blind
+                )
 
                 # 3. Take 'small blind' from 'small_blind' player
                 self.pool += 2
@@ -917,7 +927,9 @@ class Table(models.Model):  # Game
         - on table is no cards
         """
 
-        if self.game_state == 'give_3' and self.cards_on_table == None:
+        # After pycharm hint I change cards_on_table == None: from == to is
+        # Check if it won't produce a bug
+        if self.game_state == 'give_3' and self.cards_on_table is None:
             cards_3 = self.get_random_cards_from_deck(3)
             self.cards_on_table = self.convert_from_list_to_string(cards_3)
             self.save()
