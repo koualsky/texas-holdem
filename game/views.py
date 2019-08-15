@@ -14,26 +14,54 @@ def start(request):
 
 @login_required
 def play(request):
-    """Add player to free table or create new table from the last id in db +1 (4/table)."""
+    """
+    Add player to free table
+    or create new table from the last id in db +1 (4 players/table).
+    """
 
     # PRE
     join(request)
     table = request.user.player.table
 
     # GAME PATH
-    table.start()            # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
-    table.dealer_button()    # 2. Dealer (GAME: start -> dealer)
-    table.take_small_blind() # 3. Small  (GAME: dealer -> small)
-    table.take_big_blind()   # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
 
-    table.make_turn() # give_2, give_3, give_1, give_1_again, winner, again
+    # 1. Start  (GAME: ready -> start, PLAYER: 'out' -> 'start')
+    table.start()
 
-    # GAME PATH (ready, start, dealer, small, big, give_2, give_3, give_1, give_1_again, winner, again)
+    # 2. Dealer (GAME: start -> dealer)
+    table.dealer_button()
+
+    # 3. Small  (GAME: dealer -> small)
+    table.take_small_blind()
+
+    # 4. Big    (GAME: small -> big) (if min. 3 players and ...)
+    table.take_big_blind()
+
+    # 5., 6., 7., 9., 10.: give_2, give_3, give_1, give_1_again, winner, again
+    table.make_turn()
+
+    # GAME PATH (
+    # ready,
+    # start,
+    # dealer,
+    # small,
+    # big,
+    # give_2,
+    # give_3,
+    # give_1,
+    # give_1_again,
+    # winner,
+    # again
+    # )
     # PLAYER PATH (out, ready, start, check, call, raise, pass)
 
-    # Make list from player1, player2 etc. because i can't do this in django template language
+    # Make list from player1, player2 etc.
+    # because i can't do this in django template language
     players_list = table.all_players()
-    return render(request, 'game/table.html', {'table': table, 'players_list': players_list})
+    return render(request, 'game/table.html', {'table': table,
+                                               'players_list': players_list
+                                               }
+                  )
 
 
 # Auxiliary methods
@@ -50,12 +78,25 @@ def join(request):
 
 @login_required
 def find_table(request):
-    """Return table with free spots or return None if tables are full or don't exist"""
+    """
+    Return table with free spots
+    or return None if tables are full or don't exist
+    """
 
     try:
-        table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None)).order_by('pk')[0]
+        table = Table.objects.filter(
+            Q(player1=None)
+            | Q(player2=None)
+            | Q(player3=None)
+            | Q(player4=None)
+        ).order_by('pk')[0]
     except:
-        table = Table.objects.filter(Q(player1=None) | Q(player2=None) | Q(player3=None) | Q(player4=None))
+        table = Table.objects.filter(
+            Q(player1=None)
+            | Q(player2=None)
+            | Q(player3=None)
+            | Q(player4=None)
+        )
 
     return table
 
@@ -136,7 +177,8 @@ def check(request):
     different = biggest_rate - request.user.player.round_money
     request.user.player.table.give_to_pool(request.user.player, different)
 
-    all_players = request.user.player.table.all_players_without_out_and_pass_state()
+    all_players = \
+        request.user.player.table.all_players_without_out_and_pass_state()
     # 2. Change player state
     request.user.player.state = 'check'
     request.user.player.save()
@@ -144,7 +186,10 @@ def check(request):
     # 3. Change table.decision field to the next player
     #all_players = request.user.player.table.all_players_without_out_state()
     start_player = request.user.player.table.decission
-    next_player = request.user.player.table.return_next(all_players, start_player)
+    next_player = request.user.player.table.return_next(
+        all_players,
+        start_player
+    )
     request.user.player.table.decission = next_player
     request.user.player.table.save()
 
@@ -159,7 +204,8 @@ def raisee(request):
     how_much = int(request.POST.get('how_much'))
     request.user.player.table.give_to_pool(request.user.player, how_much)
 
-    all_players = request.user.player.table.all_players_without_out_and_pass_state()
+    all_players = \
+        request.user.player.table.all_players_without_out_and_pass_state()
     # 2. Change player state
     request.user.player.state = 'raise'
     request.user.player.save()
@@ -167,7 +213,10 @@ def raisee(request):
     # 3. Change table.decision field to the next player
     #all_players = request.user.player.table.all_players_without_out_state()
     start_player = request.user.player.table.decission
-    next_player = request.user.player.table.return_next(all_players, start_player)
+    next_player = request.user.player.table.return_next(
+        all_players,
+        start_player
+    )
     request.user.player.table.decission = next_player
     request.user.player.table.save()
 
@@ -177,15 +226,17 @@ def raisee(request):
 def passs(request):
     """I passed this round..."""
 
-    #all_players = request.user.player.table.all_players_without_out_and_pass_state()
-    # 1. Znajdz kwote od gracza ktory daje najwiecej do puli i daj tyle samo
+    # 1. Change player decision
     request.user.player.state = 'pass'
     request.user.player.save()
 
     # 2. Change table.decision field to the next player
     all_players = request.user.player.table.all_players_without_out_state()
     start_player = request.user.player.table.decission
-    next_player = request.user.player.table.return_next(all_players, start_player)
+    next_player = request.user.player.table.return_next(
+        all_players,
+        start_player
+    )
     request.user.player.table.decission = next_player
     request.user.player.table.save()
 
