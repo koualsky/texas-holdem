@@ -7,6 +7,7 @@ from treys import Card, Evaluator
 class PlayerModelTest(TestCase):
     """Test all Player methods"""
 
+    # Additional methods
     def test_convert_from_string_to_list(self):
         """
         Input: Strings representing cards separate by commas
@@ -60,6 +61,7 @@ class PlayerModelTest(TestCase):
         self.assertEqual(player_result, cards_result)
         self.assertIsInstance(player_result, str)
 
+    # Game methods
     def test_my_hand(self):
         """
         Input: Cards from my profile as a string
@@ -652,11 +654,17 @@ class TableModelTest(TestCase):
         self.assertEqual(table, cards_result)
         self.assertIsInstance(table, str)
 
-    # empty
     def test_fill_deck_by_all_cards(self):
-        """xxx"""
+        """Fill table deck by all cards"""
 
-        pass
+        # Arrange
+        table = Table()
+
+        # Assertions & Act
+        self.assertEqual(table.deck, None)
+        table.fill_deck_by_all_cards()
+        self.assertNotEqual(table.deck, None)
+        self.assertIsInstance(table.deck, str)
 
     def test_remove_cards_from_players(self):
         """Remove all cards from all players"""
@@ -1059,10 +1067,6 @@ class TableModelTest(TestCase):
         """That function is call in every game page overload"""
 
         # Arrange
-        cards1 = str(Card.new('As')) + ',' + str(Card.new('9s'))
-        cards2 = str(Card.new('Ah')) + ',' + str(Card.new('9h'))
-        cards3 = str(Card.new('Ad')) + ',' + str(Card.new('9d'))
-        cards4 = str(Card.new('Ac')) + ',' + str(Card.new('9c'))
         us1 = User(username='player1')
         us1.save()
         us2 = User(username='player2')
@@ -1071,13 +1075,13 @@ class TableModelTest(TestCase):
         us3.save()
         us4 = User(username='player4')
         us4.save()
-        player1 = Player(name=us1, state='check', round_money=10, cards=cards1)
+        player1 = Player(name=us1, state='check', money=90)
         player1.save()
-        player2 = Player(name=us2, state='check', round_money=10, cards=cards2)
+        player2 = Player(name=us2, state='check', money=90)
         player2.save()
-        player3 = Player(name=us3, state='check', round_money=10, cards=cards3)
+        player3 = Player(name=us3, state='check', money=90)
         player3.save()
-        player4 = Player(name=us4, state='check', round_money=10, cards=cards4)
+        player4 = Player(name=us4, state='check', money=90)
         player4.save()
         table = Table(player1=player1,
                       player2=player2,
@@ -1097,8 +1101,247 @@ class TableModelTest(TestCase):
         table.take_big_blind()
         self.assertEqual(table.game_state, 'big_blind')
 
+        # All players must give to the pool the same value
+        table.give_to_pool(player1, 2)
+        table.give_to_pool(player2, 1)
+        table.give_to_pool(player4, 2)
+
+        table.fill_deck_by_all_cards()
+
+        table.set_all_in_game_players_state('check')
         table.make_turn()
+        self.assertEqual(table.game_state, 'give_2')
+        self.assertEqual(player1.state, 'start')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
         table.make_turn()
-        print(table.game_state) # should be 'give_2' state...
-        #self.assertEqual(table.game_state, 'give_2')
-        # table.make_turn()
+        self.assertEqual(table.game_state, 'give_3')
+        self.assertEqual(player1.state, 'start')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
+        table.player1.state = 'pass'
+        table.make_turn()
+        self.assertEqual(table.game_state, 'give_1')
+        self.assertEqual(player1.state, 'pass')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
+        table.make_turn()
+        self.assertEqual(table.game_state, 'give_1_again')
+        self.assertEqual(player1.state, 'pass')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
+        table.player2.state = 'pass'
+        table.make_turn()
+        self.assertEqual(table.game_state, 'winner')
+        self.assertEqual(player1.state, 'pass')
+        self.assertEqual(player2.state, 'pass')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
+        table.make_turn()
+        self.assertEqual(table.game_state, 'ready')
+        self.assertEqual(player1.state, 'start')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
+        table.make_turn()
+        self.assertEqual(table.game_state, 'small_blind')
+        self.assertEqual(player1.state, 'start')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+        table.set_all_in_game_players_state('check')
+        table.make_turn()
+        self.assertEqual(table.game_state, 'big_blind')
+        self.assertEqual(player1.state, 'start')
+        self.assertEqual(player2.state, 'start')
+        self.assertEqual(player3.state, 'start')
+        self.assertEqual(player4.state, 'start')
+
+    def test_give_2(self):
+        """
+        Give 2 cards to each active player if:
+        - game state = give 2
+        - each player have None cards
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1)
+        player1.save()
+        player2 = Player(name=us2)
+        player2.save()
+        player3 = Player(name=us3)
+        player3.save()
+        player4 = Player(name=us4)
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='give_2'
+                      )
+        table.fill_deck_by_all_cards()
+
+        # Act
+        table.give_2()
+
+        # Assertion
+        self.assertNotIn(player1.cards, table.deck)
+        self.assertNotIn(player2.cards, table.deck)
+        self.assertNotIn(player3.cards, table.deck)
+        self.assertNotIn(player4.cards, table.deck)
+        self.assertIsInstance(player1.cards, str)
+        self.assertIsInstance(player2.cards, str)
+        self.assertIsInstance(player3.cards, str)
+        self.assertIsInstance(player4.cards, str)
+        self.assertEqual(table.game_state, 'give_2')
+
+    def test_give_3(self):
+        """
+        Give 3 cards to the table if:
+        - game state = give 3
+        - on table is no cards
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1)
+        player1.save()
+        player2 = Player(name=us2)
+        player2.save()
+        player3 = Player(name=us3)
+        player3.save()
+        player4 = Player(name=us4)
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='give_3'
+                      )
+        table.fill_deck_by_all_cards()
+
+        # Act
+        table.give_3()
+
+        # Assertion
+        self.assertNotIn(table.cards_on_table, table.deck)
+        self.assertIsInstance(table.cards_on_table, str)
+        self.assertEqual(table.game_state, 'give_3')
+
+    def test_give_1(self):
+        """
+        Give 1 card to the table if:
+        - game state = give 1
+        - on table is only 3 cards
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1)
+        player1.save()
+        player2 = Player(name=us2)
+        player2.save()
+        player3 = Player(name=us3)
+        player3.save()
+        player4 = Player(name=us4)
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='give_3'
+                      )
+        table.fill_deck_by_all_cards()
+
+        # Act
+        table.give_3()
+        table.next_game_state()
+        table.give_1()
+
+        # Assertion
+        self.assertNotIn(table.cards_on_table, table.deck)
+        self.assertIsInstance(table.cards_on_table, str)
+        self.assertEqual(table.game_state, 'give_1')
+
+    def test_give_1_again(self):
+        """
+        Give 1 card to the table if:
+        - game state = give 1 again
+        - on table is only 4 cards
+        """
+
+        # Arrange
+        us1 = User(username='player1')
+        us1.save()
+        us2 = User(username='player2')
+        us2.save()
+        us3 = User(username='player3')
+        us3.save()
+        us4 = User(username='player4')
+        us4.save()
+        player1 = Player(name=us1)
+        player1.save()
+        player2 = Player(name=us2)
+        player2.save()
+        player3 = Player(name=us3)
+        player3.save()
+        player4 = Player(name=us4)
+        player4.save()
+        table = Table(player1=player1,
+                      player2=player2,
+                      player3=player3,
+                      player4=player4,
+                      game_state='give_3'
+                      )
+        table.fill_deck_by_all_cards()
+
+        # Act
+        table.give_3()
+        table.next_game_state()
+        table.give_1()
+        table.next_game_state()
+        table.give_1_again()
+
+        # Assertion
+        self.assertNotIn(table.cards_on_table, table.deck)
+        self.assertIsInstance(table.cards_on_table, str)
+        self.assertEqual(table.game_state, 'give_1_again')
