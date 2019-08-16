@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bf643e74-0ac6-496f-88f1-733da3810ea5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/game/static/game/bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/templates/game/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/game/templates/game/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/tests/test_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/tests/test_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,59 +16,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/game/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="287" column="41" lean-forward="true" selection-start-line="287" selection-start-column="41" selection-end-line="287" selection-end-column="41" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
-                <element signature="e#999#1020#0" />
-                <element signature="e#1112#1225#0" />
-                <element signature="e#1290#1402#0" />
-                <element signature="e#1452#1751#0" />
-                <element signature="e#1803#2634#0" />
-                <element signature="e#5039#5306#0" />
-                <element signature="e#5373#5602#0" />
-                <element signature="e#5639#5955#0" />
-                <element signature="e#6009#6392#0" />
-                <element signature="e#6447#6849#0" />
-                <element signature="e#6913#7353#0" />
-                <element signature="e#7412#7610#0" />
-                <element signature="e#7688#8074#0" />
-                <element signature="e#8138#8614#0" />
-                <element signature="e#8676#9556#0" />
-                <element signature="e#9621#9871#0" />
-                <element signature="e#9915#10229#0" />
-                <element signature="e#10286#10570#0" />
-                <element signature="e#10355#10469#0" />
-                <element signature="e#10483#10570#0" />
-                <element signature="e#10518#10570#0" />
-                <element signature="e#10612#11311#0" />
-                <element signature="e#11352#12640#0" />
-                <element signature="e#12678#13060#0" />
-                <element signature="e#13116#13345#0" />
-                <element signature="e#13412#13525#0" />
-                <element signature="e#13590#13702#0" />
-                <element signature="e#13751#14030#0" />
-                <element signature="e#14083#14400#0" />
-                <element signature="e#14448#16183#0" />
-                <element signature="e#14535#16005#0" />
-                <element signature="e#16234#16686#0" />
-                <element signature="e#16733#16866#0" />
-                <element signature="e#16916#17369#0" />
-                <element signature="e#17419#17887#0" />
-                <element signature="e#17937#18405#0" />
-                <element signature="e#18473#21766#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game/templates/game/base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="38">
-              <caret line="2" selection-start-line="2" selection-end-line="2" />
+            <state relative-caret-position="57">
+              <caret line="3" column="16" lean-forward="true" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -146,9 +92,9 @@
         <option value="$PROJECT_DIR$/game/tests/tests.py" />
         <option value="$PROJECT_DIR$/game/tests/test_views.py" />
         <option value="$PROJECT_DIR$/game/tests/test_models.py" />
-        <option value="$PROJECT_DIR$/game/templates/game/base.html" />
         <option value="$PROJECT_DIR$/game/models.py" />
         <option value="$PROJECT_DIR$/game/views.py" />
+        <option value="$PROJECT_DIR$/game/templates/game/base.html" />
       </list>
     </option>
   </component>
@@ -673,13 +619,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game/templates/game/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="186">
@@ -743,6 +682,13 @@
             <element signature="e#17937#18405#0" />
             <element signature="e#18473#21766#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/templates/game/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="16" lean-forward="true" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
         </state>
       </provider>
     </entry>
