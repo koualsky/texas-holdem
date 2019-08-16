@@ -128,7 +128,10 @@ def exit(request):
 
     # 0. Set table.decission to the next player
     if table.decission == request.user.player:
-        all_players = table.all_players_without_out_and_pass_state()
+        if table.all_players_without_out_and_pass_state():
+            all_players = table.all_players_without_out_and_pass_state()
+        else:
+            all_players = table.all_players()
         start_player = table.decission
         next_player = table.return_next(
             all_players,

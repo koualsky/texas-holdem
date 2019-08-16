@@ -277,6 +277,9 @@ class Table(models.Model):  # Game
     def return_next(self, players_list, start_player):
         """Return player - next from start player"""
 
+        print(players_list)
+        print(type(players_list))
+
         length = len(players_list)
         indx = players_list.index(start_player)
         if indx == length - 1:
@@ -884,10 +887,10 @@ class Table(models.Model):  # Game
         """
         Give 2 cards to each active player if:
         - game state = give 2
-        - each player have None cards
+        - and self.check_players_have_cards() (delete this)
         """
 
-        if self.game_state == 'give_2' and self.check_players_have_cards():
+        if self.game_state == 'give_2':
 
             # Player1 (if exist)
             if self.player1 is not None and self.player1.state != 'out':

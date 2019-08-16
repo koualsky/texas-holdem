@@ -337,13 +337,31 @@ class TableModelTest(TestCase):
         player2 = Player(name=User(username='player2'))
         player3 = Player(name=User(username='player3'))
         player4 = Player(name=User(username='player4'))
-        table = Table(player1=player1, player2=player2, player3=player3, player4=player4)
+        table = Table(
+            player1=player1,
+            player2=player2,
+            player3=player3,
+            player4=player4)
         players_list = [player1, player2, player3, player4]
 
-        # Act
+        # Acts & Assertions
         result = table.return_next(players_list, player4)
+        self.assertIsInstance(result, Player)
+        self.assertEqual(result, player1)
 
-        # Assertion
+        result = table.return_next(players_list, player1)
+        self.assertIsInstance(result, Player)
+        self.assertEqual(result, player2)
+
+        result = table.return_next(players_list, player2)
+        self.assertIsInstance(result, Player)
+        self.assertEqual(result, player3)
+
+        result = table.return_next(players_list, player3)
+        self.assertIsInstance(result, Player)
+        self.assertEqual(result, player4)
+
+        result = table.return_next(players_list, player4)
         self.assertIsInstance(result, Player)
         self.assertEqual(result, player1)
 
