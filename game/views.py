@@ -122,9 +122,22 @@ def register_player(request, table):
 
 @login_required
 def exit(request):
-    # 1. Remove me from slot in table (set Null to player.table)
+
     table = request.user.player.table
     player = request.user.player
+
+    # 0. Set table.decission to the next player
+    if table.decission == request.user.player:
+        all_players = table.all_players_without_out_and_pass_state()
+        start_player = table.decission
+        next_player = table.return_next(
+            all_players,
+            start_player
+        )
+        table.decission = next_player
+        table.save()
+
+    # 1. Remove me from slot in table (set Null to player.table)
     if table.player1 == player:
         table.player1 = None
         table.save()
@@ -155,14 +168,14 @@ def exit(request):
         table.cards_on_table = None
         table.save()
 
-    # 4. Remove Table and cards from my profile
+    # 5. Remove Table and cards from my profile
     request.user.player.table = None
     request.user.player.state = 'out'
     request.user.player.round_money = 0
     request.user.player.cards = None
     request.user.player.save()
 
-    # 5. Redirect to start page
+    # 6. Redirect to start page
     return redirect('start')
 
 
@@ -190,6 +203,7 @@ def check(request):
         all_players,
         start_player
     )
+
     request.user.player.table.decission = next_player
     request.user.player.table.save()
 
@@ -221,6 +235,7 @@ def raisee(request):
     request.user.player.table.save()
 
     return redirect('play')
+
 
 @login_required
 def passs(request):

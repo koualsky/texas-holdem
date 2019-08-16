@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Player, Table
+from game.models import Player, Table
 from treys import Card, Evaluator
 
 
@@ -849,13 +849,13 @@ class TableModelTest(TestCase):
         us3.save()
         us4 = User(username='player4')
         us4.save()
-        player1 = Player(name=us1, cards=cards1)
+        player1 = Player(name=us1, cards=cards1, state='check')
         player1.save()
-        player2 = Player(name=us2, cards=cards2)
+        player2 = Player(name=us2, cards=cards2, state='check')
         player2.save()
-        player3 = Player(name=us3, cards=cards3)
+        player3 = Player(name=us3, cards=cards3, state='check')
         player3.save()
-        player4 = Player(name=us4, cards=cards4)
+        player4 = Player(name=us4, cards=cards4, state='check')
         player4.save()
         table = Table(player1=player1,
                       player2=player2,
@@ -1190,13 +1190,13 @@ class TableModelTest(TestCase):
         us3.save()
         us4 = User(username='player4')
         us4.save()
-        player1 = Player(name=us1)
+        player1 = Player(name=us1, state='start')
         player1.save()
-        player2 = Player(name=us2)
+        player2 = Player(name=us2, state='start')
         player2.save()
-        player3 = Player(name=us3)
+        player3 = Player(name=us3, state='start')
         player3.save()
-        player4 = Player(name=us4)
+        player4 = Player(name=us4, state='out')
         player4.save()
         table = Table(player1=player1,
                       player2=player2,
@@ -1213,11 +1213,10 @@ class TableModelTest(TestCase):
         self.assertNotIn(player1.cards, table.deck)
         self.assertNotIn(player2.cards, table.deck)
         self.assertNotIn(player3.cards, table.deck)
-        self.assertNotIn(player4.cards, table.deck)
+        self.assertEqual(player4.cards, None)
         self.assertIsInstance(player1.cards, str)
         self.assertIsInstance(player2.cards, str)
         self.assertIsInstance(player3.cards, str)
-        self.assertIsInstance(player4.cards, str)
         self.assertEqual(table.game_state, 'give_2')
 
     def test_give_3(self):
