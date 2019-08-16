@@ -3,90 +3,82 @@
 
 {% block content %}
 
-<a href="{% url 'play' %}" xmlns:table.biggest_rate>Refresh</a>
-|
-<a href="{% url 'exit' %}">Exit game</a>
-<!-- <h6 style="color: lightgrey;">Deck: {{ table.print_pretty_cards_deck }}</h6> -->
-<h4>Cards on table: {{ table.print_pretty_cards_on_table }}</h4>
-<h4>Pool: {{ table.pool }}</h4>
-<h4>Game state: {{ table.game_state }}</h4>
+<nav class="navbar navbar-dark bg-dark p-0 m-0">
+{% if user.is_authenticated %}
+
+    <a class="navbar-brand text-light pl-3">{{ user }}: {{ request.user.player.money }} $</a>
+    <div class="btn-group">
+        <a href="{% url 'play' %}" class="btn btn-lg btn-success my-0 my-sm-0" xmlns:table.biggest_rate>Refresh</a>
+        <a href="{% url 'exit' %}" class="btn btn-lg btn-danger my-0 my-sm-0">Exit game</a>
+    </div>
+
+{% endif %}
+</nav>
+
+<h1 class="text-center text-secondary pb-4 pt-5">Pool: {{ table.pool }} $</h1>
+<p class="text-center">Board: {{ table.print_pretty_cards_on_table }}</p>
+<!-- <h4>Game state: {{ table.game_state }}</h4> -->
 
 
+<div class="container">
+{% for player in players_list %}
+    <div class="row">
 
-<table>
-    <tr>
-        <td><!-- Dealer --></td>
-        <td>Player</td>
-        <td>Money</td>
-        <td>Rate</td>
-        <td>Cards</td>
-        <td>State</td>
-    </tr>
-
-    {% for player in players_list %}
-    <tr>
-        <!-- Show who have dealer button if this button is in table. RELATED? ;) -->
-        <td>
-            {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
-            {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
-            {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
-        </td>
-
-        <!-- This part of code is only for styling -->
+        <!-- PLAYER IS IN THE GAME -->
         {% if player.state == 'out' %}
-            <td style="color: grey;">{{ player }}</td>
-            <td style="color: grey;">{{ player.money }}</td>
-            <td style="color: grey;">{{ player.round_money }}</td>
-            <td style="color: grey;">{{ player.print_pretty_cards_cards }}</td>
+
+            <!-- DEALER, PLAYER, MONEY -->
+            <div class="col text-secondary text-right">
+                {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
+                {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
+                {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
+                {{ player }} ({{ player.money }} $)
+            </div>
+
+            <!-- CARDS -->
+            <div class="col-5 text-secondary">{{ player.print_pretty_cards_cards }}</div>
+
+            <!-- RATE -->
+            <div class="col-1 text-secondary">{{ player.round_money }}</div>
+
+        <!-- PLAYER IS OUT OF THE GAME -->
         {% else %}
-            <td>{{ player }}</td>
-            <td>{{ player.money }}</td>
-            <td>{{ player.round_money }}</td>
-            <td>
+
+            <!-- DEALER, PLAYER, MONEY -->
+            <div class="col text-right">
+                {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
+                {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
+                {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
+
+                {{ player }} ({{ player.money }} $)
+            </div>
+
+            <!-- CARDS -->
+            <div class="col-5">
                 <!-- Player can see only itself cards -->
                 {% if request.user.player == player or table.game_state == 'winner' %}
                     {{ player.print_pretty_cards_cards }}
                     {{ player.my_hand }}
-                {% elif player.cards != None %}
+                    {% elif player.cards != None %}
                     [---], [---]
                 {% endif %}
-            </td>
+            </div>
+
+            <!-- RATE -->
+            <div class="col-1">{{ player.round_money }}</div>
         {% endif %}
 
+        <div class="col-2">
 
-        <td style="color: grey;">
-
-             <!-- If game_state != winner
-                  - make decisions -->
-
-            {% if request.user.player.table.game_state != 'winner' %}
-
-                {% if request.user.player == player and table.decission == player %}
-
-                    <!-- This button shows when all players have the same round_money -->
-                    {% if request.user.player.round_money == table.biggest_rate %}
-                        <a href="{% url 'check' %}">check</a>
-
-                    <!-- This button shows when you have to add to game pool  -->
-                    {% else %}
-                        <a href="{% url 'check' %}">call</a>
-                    {% endif %}
-
-                    <form action="/raise/" method="POST" style="float:left;">{% csrf_token %}
-                        <input id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="1" max="{{ request.user.player.money }}" style="width:40px;">
-                        <button type="submit">raise</button>
-                    </form>
-
-                    <a href="{% url 'pass' %}">pass</a>
-                {% endif %}
-            {% endif %}
-
-
-
+            <!-- STATE -->
             <!-- Show who turn is now -->
             {% if table.decission == player %}
                 {% if request.user.player != player %}
-                    ( ! )
+
+                    <!-- BEFORE: ( ! ) -->
+                    <div class="spinner-grow spinner-grow-sm" role="status">
+                        <span class="sr-only">( ! )</span>
+                    </div>
                 {% endif %}
             <!-- If you aren't you, show him status -->
             {% else %}
@@ -94,14 +86,98 @@
                     {{ player.state }}
                 {% endif %}
             {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
 
-</table>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<!-- DECISSION IF YOUR'S TURN -->
+<div class="container-fluid fixed-bottom text-center mb-3">
+{% for player in players_list %}
+
+    <!-- CHECK / CALL / RAISE -->
+    {% if request.user.player.table.game_state != 'winner' %}
+        {% if request.user.player == player and table.decission == player %}
+
+            <form action="/raise/" method="POST" class="float-none d-inline text-center">{% csrf_token %}
+
+                <div class="form-group p-1 text-center">
+
+                    <div class="input-group mb-3 text-center">
+                        <input class="form-control text-center" id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="0" max="{{ request.user.player.money }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">$</span>
+                        </div>
+                    </div>
+
+
+                    <input type="range" class="custom-range form-control-range" min="0" max="{{ request.user.player.money }}" value="0" id="formControlRange">
+                </div>
+
+                <!-- 1. Span is for JS functionality -->
+                <span id="raise_button"></span>
+            </form>
+
+            <!-- 2. Span is for JS functionality -->
+            <span id="check_call_buttons">
+            <!-- This button shows when all players have the same round_money -->
+            {% if request.user.player.round_money == table.biggest_rate %}
+                <a href="{% url 'check' %}" class="btn btn-lg btn-success">check</a>
+                <!-- This button shows when you have to add to game pool  -->
+            {% else %}
+                <a href="{% url 'check' %}" class="btn btn-lg btn-success">call</a>
+            {% endif %}
+            </span>
+
+        {% endif %}
+    {% endif %}
+
+    <!-- PASS -->
+    {% if request.user.player.table.game_state != 'winner' %}
+        {% if request.user.player == player and table.decission == player %}
+            <a href="{% url 'pass' %}" class="btn btn-lg btn-danger">pass</a>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+</div>
+
+
+
+
+
 
 <!-- Hide line below until game state achieve 'winner' state -->
 {% if request.user.player.table.game_state == 'winner' %}<p>THE WINNER IS: {{ table.the_winner }}</p>{% endif %}
 {% if request.user.player.table.game_state == 'winner' %}<a href="{% url 'check' %}">Play again</a>{% endif %}
 
+
+<script>
+
+var check_call_buttons = document.getElementById("check_call_buttons").innerHTML;
+var raise_button = '<button type="submit" class="btn btn-lg btn-warning">raise</button>';
+
+// Input range functionality
+document.getElementById("formControlRange").oninput = function() {
+
+    // Change text input value if I drag range
+    var new_value = document.getElementById("formControlRange").value;
+	document.getElementById("how_much").value = new_value;
+
+    // If value in range > 0
+	if (new_value > 0) {
+	    document.getElementById("raise_button").innerHTML = raise_button;
+	    document.getElementById("check_call_buttons").innerHTML = "";
+	}
+
+	// If value in range == 0
+	if (new_value == 0) {
+	    document.getElementById("raise_button").innerHTML = "";
+	    document.getElementById("check_call_buttons").innerHTML = check_call_buttons;
+	}
+}
+
+// Change 'button to check if value in range == 0
+
+</script>
 {% endblock %}

@@ -2,6 +2,19 @@
 
 {% block content %}
 
-<a href="{% url 'play' %}">Play</a>
+<nav>
+{% if user.is_authenticated %}
+
+    {{ user }}: {{ request.user.player.money }}$
+    <a href="{% url 'logout' %}">Logout</a>
+    <a href="{% url 'play' %}">Play</a>
+
+{% else %}
+
+    <a href="{% url 'login' %}">login</a>
+    <a href="{% url 'register' %}">register</a>
+
+{% endif %}
+</nav>
 
 {% endblock %}
