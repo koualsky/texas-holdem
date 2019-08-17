@@ -3,6 +3,8 @@
 
 {% block content %}
 
+
+
 <nav class="navbar navbar-dark bg-dark p-0 m-0">
 {% if user.is_authenticated %}
 
@@ -15,123 +17,89 @@
 {% endif %}
 </nav>
 
-<!-- POOL -->
-<h3 class="text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
 
-<!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
-<div class="container p-0 border border-top-0 rounded" style="max-width: 320px;">
 
-<!-- GAME TABLE (table-bordered) -->
-<table class="table container p-0 m-0">
-  <tbody>
 
-    <!-- BOARD -->
-    <tr>
-        <td colspan="2" class="align-middle text-right p-0">Board</td>
-        <td colspan="3" class="align-middle text-left p-0"><span class="d-flex" id="board_cards" style="cursor: default;">{{ table.print_pretty_cards_on_table }}</span></td>
-    </tr>
+<!-- 1. ALL PLAY SCREEN: POOL, BOARD AND PLAYERS CARDS -->
+<div class="container p-0" style="max-width: 414px;">
+    <h3 class="text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
+    <!-- bylo <p> -->
+    <div class="d-flex justify-content-center text-center align-items-center" style="cursor: default;">Board: <span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span></div>
+    <!-- <h4>Game state: {{ table.game_state }}</h4> -->
 
-    <!-- PLAYERS -->
-    {% for player in players_list %}
+{% for player in players_list %}
+    <div class="row">
 
-        <!-- IN GAME -->
-        {% if player.state != 'out' %}
-        <tr>
+        <!-- PLAYER IS IN THE GAME -->
+        {% if player.state == 'out' %}
 
-          <!-- DEALER -->
-          <td class="align-middle text-center p-0" style="width: 40px;">
-              {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
-              {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
-              {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
-          </td>
+            <!-- DEALER, PLAYER, MONEY -->
+            <div class="col text-secondary text-right">
+                {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
+                {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
+                {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
+                {{ player }} ({{ player.money }} $)
+            </div>
 
-          <!-- NAME & MONEY -->
-          <td class="align-middle text-right p-0" style="width: 100px; max-width: 100px;">
-              {% if player == request.user.player %}<b>{{ player }}</b>{% else %}{{ player }}{% endif %}<br /><sup class="text-muted">{{ player.money }} $</sup>
-          </td>
+            <!-- CARDS -->
+            <div class="col-5 text-secondary">{{ player.print_pretty_cards_cards }}</div>
 
-          <!-- CARDS -->
-          <td class="align-middle text-left p-0 d-flex align-items-center" style="cursor: default;">
+            <!-- RATE -->
+        <div class="col-1 text-secondary">{{ player.round_money }}</div>
+
+        <!-- PLAYER IS OUT OF THE GAME -->
+        {% else %}
+
+            <!-- DEALER, PLAYER, MONEY -->
+            <div class="col d-flex text-right align-items-center">
+                {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
+                {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
+                {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
+
+                {{ player }} ({{ player.money }} $)
+            </div>
+
+            <!-- CARDS -->
+            <div class="col-5 d-flex justify-content-center text-center align-items-center" style="cursor: default;">
                 <!-- Player can see only itself cards -->
                 {% if request.user.player == player or table.game_state == 'winner' %}
                     <span class="d-flex" id="player_cards">{{ player.print_pretty_cards_cards }}</span>
                     {{ player.my_hand }}
                     {% elif player.cards != None %}
                     <span class="d-flex">
-                        <div class="card text-white bg-dark container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
-                        <div class="card text-white bg-dark container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
+                        <div class="card container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
+                        <div class="card container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
                     </span>
                 {% endif %}
-          </td>
+            </div>
 
-          <!-- RATE -->
-          <td class="align-middle text-center p-0" style="width: 40px;">{{ player.round_money }}</td>
+            <!-- RATE -->
+            <div class="col-1 d-flex align-items-center">{{ player.round_money }}</div>
+        {% endif %}
 
-          <!-- STATE -->
-          <td class="align-middle text-center p-0" style="width: 50px;">
-              <!-- STATE -->
-              <!-- Show who turn is now -->
-              {% if table.decission == player %}
+        <div class="col-2 d-flex align-items-center">
+
+            <!-- STATE -->
+            <!-- Show who turn is now -->
+            {% if table.decission == player %}
                 {% if request.user.player != player %}
+
                     <!-- BEFORE: ( ! ) -->
                     <div class="spinner-grow spinner-grow-sm" role="status">
                         <span class="sr-only">( ! )</span>
                     </div>
                 {% endif %}
-              <!-- If you aren't you, show him status -->
-              {% else %}
+            <!-- If you aren't you, show him status -->
+            {% else %}
                 {% if player.state != 'start' %}
                     {{ player.state }}
                 {% endif %}
-              {% endif %}
-          </td>
-        </tr>
+            {% endif %}
 
-        <!-- OUT OF GAME -->
-        {% else %}
-
-        <tr style="color: #d9d9d9;">
-
-          <!-- DEALER -->
-          <td class="align-middle text-center p-0" style="width: 40px;">
-              {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
-              {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
-              {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
-          </td>
-
-          <!-- NAME & MONEY -->
-          <td class="align-middle text-right p-0" style="width: 100px; max-width: 100px;">
-              {{ player }}<br /><sup>{{ player.money }} $</sup>
-          </td>
-
-          <!-- CARDS -->
-          <td class="align-middle text-left p-0 d-flex align-items-center" style="cursor: default;"></td>
-
-          <!-- RATE -->
-          <td class="align-middle text-center p-0" style="width: 40px;"></td>
-
-          <!-- STATE -->
-          <td class="align-middle text-left p-0" style="width: 50px;">{{ player.state }}</td>
-        </tr>
-        {% endif %}
-    {% endfor %}
-  </tbody>
-</table>
+        </div>
+    </div>
+{% endfor %}
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
