@@ -48,6 +48,12 @@ class Player(models.Model):
             cards_list_with_ints = \
                 self.convert_from_string_to_list(self.cards)
             output = Card.print_pretty_cards(cards_list_with_ints)
+
+            # Change output from [9h], [6s], ... to 9h 6s ...
+            output = output.replace("[", "")
+            output = output.replace("]", "")
+            output = output.replace(",", "")
+            output = output.replace(" ", "")
             return output
         else:
             return ''
@@ -433,6 +439,12 @@ class Table(models.Model):  # Game
             cards_list_with_ints = \
                 self.convert_from_string_to_list(self.cards_on_table)
             output = Card.print_pretty_cards(cards_list_with_ints)
+
+            # Change output from [9h], [6s], ... to 9h 6s ...
+            output = output.replace("[", "")
+            output = output.replace("]", "")
+            output = output.replace(",", "")
+            output = output.replace(" ", "")
             return output
         else:
             return ''

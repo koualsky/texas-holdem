@@ -3,24 +3,31 @@
 
 {% block content %}
 
+
+
 <nav class="navbar navbar-dark bg-dark p-0 m-0">
 {% if user.is_authenticated %}
 
-    <a class="navbar-brand text-light pl-3">{{ user }}: {{ request.user.player.money }} $</a>
+    <a class="navbar-text text-light pl-3">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
     <div class="btn-group">
-        <a href="{% url 'play' %}" class="btn btn-lg btn-success my-0 my-sm-0" xmlns:table.biggest_rate>Refresh</a>
-        <a href="{% url 'exit' %}" class="btn btn-lg btn-danger my-0 my-sm-0">Exit game</a>
+        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0">Refresh</a>
+        <a href="{% url 'exit' %}" class="btn btn-danger my-0 my-sm-0">Exit game</a>
     </div>
 
 {% endif %}
 </nav>
 
-<h1 class="text-center text-secondary pb-4 pt-5">Pool: {{ table.pool }} $</h1>
-<p class="text-center">Board: {{ table.print_pretty_cards_on_table }}</p>
-<!-- <h4>Game state: {{ table.game_state }}</h4> -->
 
 
-<div class="container">
+
+<!-- 1. ALL PLAY SCREEN: POOL, BOARD AND PLAYERS CARDS -->
+<div class="container" style="max-width: 414px;">
+    <h3 class="text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
+    <!-- bylo <p> -->
+    <div class="d-flex justify-content-center text-center align-items-center" style="cursor: default;">Board: <span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span></div>
+    <!-- <h4>Game state: {{ table.game_state }}</h4> -->
+
+
 {% for player in players_list %}
     <div class="row">
 
@@ -39,13 +46,13 @@
             <div class="col-5 text-secondary">{{ player.print_pretty_cards_cards }}</div>
 
             <!-- RATE -->
-            <div class="col-1 text-secondary">{{ player.round_money }}</div>
+        <div class="col-1 text-secondary">{{ player.round_money }}</div>
 
         <!-- PLAYER IS OUT OF THE GAME -->
         {% else %}
 
             <!-- DEALER, PLAYER, MONEY -->
-            <div class="col text-right">
+            <div class="col d-flex text-right align-items-center">
                 {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
                 {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
                 {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
@@ -54,21 +61,24 @@
             </div>
 
             <!-- CARDS -->
-            <div class="col-5">
+            <div class="col-5 d-flex justify-content-center text-center align-items-center" style="cursor: default;">
                 <!-- Player can see only itself cards -->
                 {% if request.user.player == player or table.game_state == 'winner' %}
-                    {{ player.print_pretty_cards_cards }}
+                    <span class="d-flex" id="player_cards">{{ player.print_pretty_cards_cards }}</span>
                     {{ player.my_hand }}
                     {% elif player.cards != None %}
-                    [---], [---]
+                    <span class="d-flex">
+                        <div class="card container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
+                        <div class="card container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
+                    </span>
                 {% endif %}
             </div>
 
             <!-- RATE -->
-            <div class="col-1">{{ player.round_money }}</div>
+            <div class="col-1 d-flex align-items-center">{{ player.round_money }}</div>
         {% endif %}
 
-        <div class="col-2">
+        <div class="col-2 d-flex align-items-center">
 
             <!-- STATE -->
             <!-- Show who turn is now -->
@@ -92,8 +102,10 @@
 {% endfor %}
 </div>
 
-<!-- DECISSION IF YOUR'S TURN -->
-<div class="container-fluid fixed-bottom text-center mb-3">
+
+
+<!-- 2. DECISSION IF YOUR'S TURN -->
+<div class="container-fluid fixed-bottom text-center mb-3" style="max-width: 414px;">
 {% for player in players_list %}
 
     <!-- CHECK / CALL / RAISE -->
@@ -105,14 +117,14 @@
                 <div class="form-group p-1 text-center">
 
                     <div class="input-group mb-3 text-center">
-                        <input class="form-control text-center" id="how_much" name="how_much" type="number" value={{ table.biggest_rate|subtract:request.user.player.round_money }} min="0" max="{{ request.user.player.money }}">
+                        <input class="form-control text-center" id="how_much" name="how_much" type="number" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}">
                         <div class="input-group-append">
                             <span class="input-group-text" id="basic-addon2">$</span>
                         </div>
                     </div>
 
 
-                    <input type="range" class="custom-range form-control-range" min="0" max="{{ request.user.player.money }}" value="0" id="formControlRange">
+                    <input type="range" class="custom-range form-control-range" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" id="formControlRange">
                 </div>
 
                 <!-- 1. Span is for JS functionality -->
@@ -151,33 +163,5 @@
 {% if request.user.player.table.game_state == 'winner' %}<p>THE WINNER IS: {{ table.the_winner }}</p>{% endif %}
 {% if request.user.player.table.game_state == 'winner' %}<a href="{% url 'check' %}">Play again</a>{% endif %}
 
-
-<script>
-
-var check_call_buttons = document.getElementById("check_call_buttons").innerHTML;
-var raise_button = '<button type="submit" class="btn btn-lg btn-warning">raise</button>';
-
-// Input range functionality
-document.getElementById("formControlRange").oninput = function() {
-
-    // Change text input value if I drag range
-    var new_value = document.getElementById("formControlRange").value;
-	document.getElementById("how_much").value = new_value;
-
-    // If value in range > 0
-	if (new_value > 0) {
-	    document.getElementById("raise_button").innerHTML = raise_button;
-	    document.getElementById("check_call_buttons").innerHTML = "";
-	}
-
-	// If value in range == 0
-	if (new_value == 0) {
-	    document.getElementById("raise_button").innerHTML = "";
-	    document.getElementById("check_call_buttons").innerHTML = check_call_buttons;
-	}
-}
-
-// Change 'button to check if value in range == 0
-
-</script>
 {% endblock %}
+
