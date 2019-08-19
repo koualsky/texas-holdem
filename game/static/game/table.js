@@ -1,4 +1,4 @@
-/** Change player cards to css **/
+/** WINNER Change player cards to css **/
 
 function changePlayerCards(cards_id) {
 
@@ -7,53 +7,65 @@ function changePlayerCards(cards_id) {
     // 1. Get player cards
     var player_cards = document.getElementById(player_cards_id).innerHTML;
 
-    // 2. Change string to 2chars array
-    player_arr = player_cards.match(/.{1,2}/g);
-    var new_player = '';
+    if (player_cards.length < 10) {
 
-    // 3. Put cards decorated by cards div's
-    for (var i = 0; i < player_arr.length; i++) {
-        if (player_arr[i][1] == '♥' || player_arr[i][1] == '♦') {
-            new_player += ('<div class="card container-fluid m-1 text-danger" style="width: 2rem; height: 3rem;">' + player_arr[i] + '</div>');
-        } else {
-            new_player += ('<div class="card container-fluid m-1" style="width: 2rem; height: 3rem;">' + player_arr[i] + '</div>');
+        // 2. Change string to 2chars array
+        player_arr = player_cards.match(/.{1,2}/g);
+        var new_player = '';
+
+        // 3. Put cards decorated by cards div's
+        for (var i = 0; i < player_arr.length; i++) {
+            if (player_arr[i][1] == '♥' || player_arr[i][1] == '♦') {
+                new_player += ('<div class="card container-fluid m-1 text-danger">' + player_arr[i] + '</div>');
+            } else {
+                new_player += ('<div class="card container-fluid m-1">' + player_arr[i] + '</div>');
+            }
         }
+        document.getElementById(player_cards_id).innerHTML = new_player;
     }
-    document.getElementById(player_cards_id).innerHTML = new_player;
 }
 
-try {
-    changePlayerCards(1);
-    changePlayerCards(2);
-    changePlayerCards(3);
-    changePlayerCards(4);
-} catch (error) {
-    console.log(error);
+window.onload = function() {
+    try {
+        changePlayerCards(1);
+        changePlayerCards(2);
+        changePlayerCards(3);
+        changePlayerCards(4);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 
 
 /** Change board cards to css **/
 
+// 1. Get board cards
 try {
-    // 1. Get board cards
     var board_cards = document.getElementById("board_cards").innerHTML;
-
-    // 2. Change string to 2chars array
-    board_arr = board_cards.match(/.{1,2}/g);
-    var new_board = '';
-
-    // 3. Put cards decorated by cards div's
-    for (var i = 0; i < board_arr.length; i++) {
-        if (board_arr[i][1] == '♥' || board_arr[i][1] == '♦') {
-            new_board += ('<div class="card container-fluid m-1 text-danger" style="width: 2rem; height: 3rem;">' + board_arr[i] + '</div>');
-        } else {
-            new_board += ('<div class="card container-fluid m-1" style="width: 2rem; height: 3rem;">' + board_arr[i] + '</div>');
-        }
-    }
-    document.getElementById("board_cards").innerHTML = new_board;
 } catch (error) {
     console.log(error);
+    var board_cards = '';
+}
+
+if (board_cards.length > 0) {
+    try {
+        // 2. Change string to 2chars array
+        board_arr = board_cards.match(/.{1,2}/g);
+        var new_board = '';
+
+        // 3. Put cards decorated by cards div's
+        for (var i = 0; i < board_arr.length; i++) {
+            if (board_arr[i][1] == '♥' || board_arr[i][1] == '♦') {
+                new_board += ('<div class="card container-fluid m-1 text-danger">' + board_arr[i] + '</div>');
+            } else {
+                new_board += ('<div class="card container-fluid m-1">' + board_arr[i] + '</div>');
+            }
+        }
+        document.getElementById("board_cards").innerHTML = new_board;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 

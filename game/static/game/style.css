@@ -1,0 +1,69 @@
+body {
+    background: #eee;
+}
+
+.pool {
+    cursor: default;
+}
+
+table {
+    cursor: default;
+}
+
+table tr {}
+
+table tr td.dealer {
+    width: 2.5%;
+}
+
+table tr td.name {
+    width: 31.25%;
+    max-width: 31.25%;
+}
+
+table tr td.cards {
+}
+
+table tr td.rate {
+    width: 12.5%;
+}
+
+table tr td.state {
+    width: 15.625%;
+}
+
+.card {
+    width: 2em;
+    height: 3em;
+}
+
+.game-board {
+    max-width: 320px;
+    font-size: 1em;
+}
+
+
+
+@media only screen and (min-width: 320px) {
+    .game-board {
+        max-width: 320px;
+        font-size: 1em;
+    }
+    .pool {
+        font-size: 2em;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .game-board {
+        max-width: 768px;
+        font-size: 1.8em;
+        display: flex; /** This sets up decisions next to game-board **/
+    }
+    .pool {
+        font-size: 3.5em;
+
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+}

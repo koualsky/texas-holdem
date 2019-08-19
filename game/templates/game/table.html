@@ -8,27 +8,32 @@
 
     <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
     <div class="btn-group">
-        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0">Refresh</a>
-        <a href="{% url 'exit' %}" class="btn btn-danger my-0 my-sm-0">Exit game</a>
+        <a href="{% url 'play' %}" class="btn btn-success btn-lg my-0 my-sm-0">Refresh</a>
+        <a href="{% url 'exit' %}" class="btn btn-danger btn-lg my-0 my-sm-0">Exit game</a>
     </div>
 
 {% endif %}
 </nav>
 
 <!-- POOL -->
-<h3 class="text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
+<h3 class="pool text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
+
+
+
+
+
 
 <!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
-<div class="container p-0 border border-top-0 rounded" style="max-width: 320px;">
+<div class="game-board container p-0 rounded justify-content-center">
 
 <!-- GAME TABLE (table-bordered) -->
-<table class="table container p-0 m-0" style="cursor: default;">
+<table class="table table-border border rounded-lg container p-0 m-0 mb-4">
   <tbody>
 
     <!-- BOARD -->
     <tr>
         <td colspan="2" class="align-middle text-right p-0">Board</td>
-        <td colspan="3" class="align-middle text-left p-0"><span class="d-flex" id="board_cards" style="cursor: default;">{{ table.print_pretty_cards_on_table }}</span></td>
+        <td colspan="3" class="align-middle text-left p-0"><span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span></td>
     </tr>
 
     <!-- PLAYERS -->
@@ -38,49 +43,64 @@
         {% if player.state != 'out' %}
 
         <!-- Backlight for winner -->
-        {% if table.the_winner == player %}
-        <tr style="background-color: red;">
+        {% if table.game_state == 'winner' and table.the_winner == player %}
+        <tr class="bg-success">
         {% else %}
         <tr>
         {% endif %}
 
           <!-- DEALER -->
-          <td class="align-middle text-center p-0" style="width: 40px;">
-              {% if table.game_state != 'ready' and table.dealer == player %} <span class="badge badge-pill badge-danger">D</span> {% endif %}
-              {% if table.game_state != 'ready' and table.small_blind == player %} <span class="badge badge-pill badge-warning">S</span> {% endif %}
-              {% if table.game_state != 'ready' and table.big_blind == player %} <span class="badge badge-pill badge-warning">B</span> {% endif %}
+          <td class="dealer align-middle text-center p-0">
+              {% if table.game_state != 'ready' and table.dealer == player %} <span class="badge badge-pill badge-dark text-warning">D</span> {% endif %}
+              <!--{% if table.game_state != 'ready' and table.small_blind == player %} <span class="badge badge-pill badge-warning">S</span> {% endif %}
+              {% if table.game_state != 'ready' and table.big_blind == player %} <span class="badge badge-pill badge-warning">B</span> {% endif %}-->
           </td>
 
           <!-- NAME & MONEY -->
-          <td class="align-middle text-right p-0" style="width: 100px; max-width: 100px;">
+          <td class="name align-middle text-right p-0">
               {% if player == request.user.player %}<b>{{ player }}</b>{% else %}{{ player }}{% endif %}<br /><sup class="text-muted">{{ player.money }} $</sup>
           </td>
 
           <!-- CARDS -->
-          <td class="align-middle text-left p-0 d-flex align-items-center">
-                <!-- Player can see only itself cards -->
-                {% if request.user.player == player or table.game_state == 'winner' %}
+          <td class="cards align-middle text-left p-0 d-flex align-items-center">
+
+                <!-- WINNER? Show all cards -->
+                {% if table.game_state == 'winner' %}
                     <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span>
                     {{ player.my_hand }}
-                    {% elif player.cards != None %}
-                    <span class="d-flex">
-                        <div class="card text-white bg-dark container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
-                        <div class="card text-white bg-dark container-fluid m-1" style="width: 2rem; height: 3rem;"></div>
-                    </span>
+
+                <!-- NO? Players can see only itself cards or blank -->
+                {% else %}
+
+                    <!-- Player is me: print my cards -->
+                    {% if player == request.user.player %}
+                        <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span>{{ player.my_hand }}
+
+                    <!-- Player is not me: print blank cards-->
+                    {% elif table.game_state != 'ready' and table.game_state != 'small_blind' and table.game_state != 'big_blind' %}
+                        <span class="d-flex" id="player_cards_{{ forloop.counter }}">
+                            <div class="card bg-dark container-fluid m-1"></div>
+                            <div class="card bg-dark container-fluid m-1"></div>
+                        </span>
+
+
+
+                    {% endif %}
+
                 {% endif %}
           </td>
 
           <!-- RATE -->
-          <td class="align-middle text-center p-0" style="width: 40px;">{{ player.round_money }}</td>
+          <td class="rate align-middle text-center p-0">{{ player.round_money }}</td>
 
           <!-- STATE -->
-          <td class="align-middle text-center p-0" style="width: 50px;">
+          <td class="state align-middle text-center p-0">
               <!-- STATE -->
               <!-- Show who turn is now -->
               {% if table.decission == player %}
                 {% if request.user.player != player %}
                     <!-- BEFORE: ( ! ) -->
-                    <div class="spinner-grow spinner-grow-sm" role="status">
+                    <div class="spinner-grow spinner-grow-sm align-middle" role="status">
                         <span class="sr-only">( ! )</span>
                     </div>
                 {% endif %}
@@ -99,14 +119,14 @@
         <tr style="color: #d9d9d9;">
 
           <!-- DEALER -->
-          <td class="align-middle text-center p-0" style="width: 40px;">
+          <td class="align-middle text-center p-0" style="width: 12.5%;">
               {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
               {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
               {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
           </td>
 
           <!-- NAME & MONEY -->
-          <td class="align-middle text-right p-0" style="width: 100px; max-width: 100px;">
+          <td class="align-middle text-right p-0" style="width: 31.25%; max-width: 31.25%;">
               {{ player }}<br /><sup>{{ player.money }} $</sup>
           </td>
 
@@ -114,16 +134,16 @@
           <td class="align-middle text-left p-0 d-flex align-items-center" style="cursor: default;"></td>
 
           <!-- RATE -->
-          <td class="align-middle text-center p-0" style="width: 40px;"></td>
+          <td class="align-middle text-center p-0" style="width: 12.5%;"></td>
 
           <!-- STATE -->
-          <td class="align-middle text-left p-0" style="width: 50px;">{{ player.state }}</td>
+          <td class="align-middle text-left p-0" style="width: 15.625%;">{{ player.state }}</td>
         </tr>
         {% endif %}
     {% endfor %}
   </tbody>
 </table>
-</div>
+
 
 
 
@@ -142,7 +162,7 @@
 
 
 <!-- 2. DECISSION IF YOUR'S TURN -->
-<div class="container-fluid fixed-bottom text-center mb-3" style="max-width: 414px;">
+<div class="container-fluid pl-0 pr-0 text-center">
 {% for player in players_list %}
 
     <!-- CHECK / CALL / RAISE -->
@@ -153,7 +173,7 @@
 
                 <div class="form-group p-1 text-center">
 
-                    <div class="input-group mb-3 text-center">
+                    <div class="input-group text-center">
                         <input class="form-control text-center" id="how_much" name="how_much" type="number" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}">
                         <div class="input-group-append">
                             <span class="input-group-text" id="basic-addon2">$</span>
@@ -191,6 +211,7 @@
 {% endfor %}
 </div>
 
+</div>
 
 
 
