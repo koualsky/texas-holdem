@@ -6,7 +6,7 @@
 <nav class="navbar navbar-dark bg-dark p-0 m-0">
 {% if user.is_authenticated %}
 
-    <a class="navbar-text text-light pl-3">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
+    <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
     <div class="btn-group">
         <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0">Refresh</a>
         <a href="{% url 'exit' %}" class="btn btn-danger my-0 my-sm-0">Exit game</a>
@@ -22,7 +22,7 @@
 <div class="container p-0 border border-top-0 rounded" style="max-width: 320px;">
 
 <!-- GAME TABLE (table-bordered) -->
-<table class="table container p-0 m-0">
+<table class="table container p-0 m-0" style="cursor: default;">
   <tbody>
 
     <!-- BOARD -->
@@ -36,13 +36,19 @@
 
         <!-- IN GAME -->
         {% if player.state != 'out' %}
+
+        <!-- Backlight for winner -->
+        {% if table.the_winner == player %}
+        <tr style="background-color: red;">
+        {% else %}
         <tr>
+        {% endif %}
 
           <!-- DEALER -->
           <td class="align-middle text-center p-0" style="width: 40px;">
-              {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
-              {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
-              {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
+              {% if table.game_state != 'ready' and table.dealer == player %} <span class="badge badge-pill badge-danger">D</span> {% endif %}
+              {% if table.game_state != 'ready' and table.small_blind == player %} <span class="badge badge-pill badge-warning">S</span> {% endif %}
+              {% if table.game_state != 'ready' and table.big_blind == player %} <span class="badge badge-pill badge-warning">B</span> {% endif %}
           </td>
 
           <!-- NAME & MONEY -->
@@ -51,10 +57,10 @@
           </td>
 
           <!-- CARDS -->
-          <td class="align-middle text-left p-0 d-flex align-items-center" style="cursor: default;">
+          <td class="align-middle text-left p-0 d-flex align-items-center">
                 <!-- Player can see only itself cards -->
                 {% if request.user.player == player or table.game_state == 'winner' %}
-                    <span class="d-flex" id="player_cards">{{ player.print_pretty_cards_cards }}</span>
+                    <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span>
                     {{ player.my_hand }}
                     {% elif player.cards != None %}
                     <span class="d-flex">
@@ -191,8 +197,35 @@
 
 
 <!-- Hide line below until game state achieve 'winner' state -->
-{% if request.user.player.table.game_state == 'winner' %}<p>THE WINNER IS: {{ table.the_winner }}</p>{% endif %}
-{% if request.user.player.table.game_state == 'winner' %}<a href="{% url 'check' %}">Play again</a>{% endif %}
+{% if request.user.player.table.game_state == 'winner' %}
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-body text-center">
+          The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(window).on('load', function(){
+        $('#myModal').modal('show')
+    });
+</script>
+
+<div class="text-center p-4">
+    <a href="{% url 'check' %}" class="btn btn-success btn-lg my-0 my-sm-0">Play again</a>
+</div>
+
+{% endif %}
 
 {% endblock %}
 
