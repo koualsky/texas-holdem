@@ -25,7 +25,10 @@ function changePlayerCards(cards_id) {
     }
 }
 
+/** REFRESH **/
 window.onload = function() {
+
+    // Change string to cards
     try {
         changePlayerCards(1);
         changePlayerCards(2);
@@ -34,6 +37,12 @@ window.onload = function() {
     } catch (error) {
         console.log(error);
     }
+
+    // Make fade effect
+    document.getElementById("hideAll").style.opacity='0';
+    setTimeout(function(){
+        document.getElementById("hideAll").style.display = "none";
+    }, 500);
 }
 
 
