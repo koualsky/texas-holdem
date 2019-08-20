@@ -9,7 +9,8 @@ from .models import Player, Table
 
 # Game
 def start(request):
-    return render(request, 'game/start.html')
+    best_players = Player.objects.all().order_by('-money')[:100]
+    return render(request, 'game/start.html', { 'best_players': best_players })
 
 
 @login_required

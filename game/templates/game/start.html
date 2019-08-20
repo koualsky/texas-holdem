@@ -21,4 +21,18 @@
 {% endif %}
 </nav>
 
+<h2 class="text-center p-4 text-secondary">Top 100</h2>
+
+<div class="top-100-container container p-0 justify-content-center text-secondary">
+    <table class="table border container p-0 m-0">
+    {% for player in best_players %}
+        <tr>
+            <td class="align-middle text-right text-secondary">{{ forloop.counter }}</td>
+            <td class="align-middle text-right text-secondary">{{ player }}</td>
+            <td class="align-middle text-left text-secondary">{{ player.money }} $</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
 {% endblock %}
