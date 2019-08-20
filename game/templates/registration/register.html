@@ -2,11 +2,53 @@
 
 {% block content %}
 
-Register page
+<nav class="navbar navbar-dark bg-dark p-0 m-0">
+    <a href="{% url 'start' %}" class="navbar-text text-light pl-3">Start</a>
+    <div class="btn-group">
+        <a href="{% url 'login' %}" class="btn btn-success btn-lg my-0 my-sm-0">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg my-0 my-sm-0">Register</a>
+    </div>
+</nav>
 
-<h2>Sign up</h2>
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign up</button>
+
+
+
+
+
+
+
+
+
+<form method="post" class="login-form text-center container align-items-center align-middle">{% csrf_token %}
+    <div class="form-group p-3 text-secondary">
+
+        <div class="form-notifications">
+            {% if form.errors %}
+            <p>Your username or password is incorrect. Please try again.</p>
+            <ul class="text-left"><li>Your password can't be too similar to your other personal information.</li><li>Your password must contain at least 8 characters.</li><li>Your password can't be a commonly used password.</li><li>Your password can't be entirely numeric.</li></ul>
+            {% endif %}
+        </div>
+
+        <!-- {{ form.as_p }} -->
+        <input type="text" name="username" maxlength="10" placeholder="Username (max 10 chars)" autofocus required class="form-control m-1"/>
+
+        <input type="password" name="password1" placeholder="Password" required class="form-control m-1" />
+
+        <input type="password" name="password2" placeholder="Repeat password" required class="form-control m-1" />
+
+        <button type="submit" class="btn btn-primary ml-1">Sign up</button>
+    </div>
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock %}

@@ -2,6 +2,14 @@ body {
     background: #eee;
 }
 
+.login-form {
+    max-width: 320px;
+}
+
+.form-notifications {
+    font-size: 0.8em;
+}
+
 #hideAll {
     position: fixed;
     left: 0px;
@@ -26,7 +34,7 @@ table {
 table tr {}
 
 table tr td.dealer {
-    width: 2.5%;
+    width: 12.5%;
 }
 
 table tr td.name {

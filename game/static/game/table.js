@@ -1,3 +1,21 @@
+/** Additional functions **/
+
+// Counter then redirect
+/*
+function decisionCounter(id, seconds, url) {
+    var counter = seconds;
+    var refreshIntervalId = setInterval(function(){
+        counter--;
+        document.getElementById(id).innerHTML = counter;
+        if (counter == 0) {
+            clearInterval(refreshIntervalId);
+            window.location.href = url;
+        }
+    }, 1000);
+    refreshIntervalId();
+}
+*/
+
 /** WINNER Change player cards to css **/
 
 function changePlayerCards(cards_id) {
@@ -39,12 +57,23 @@ window.onload = function() {
     }
 
     // Make fade effect
+    /*
     document.getElementById("hideAll").style.opacity='0';
     setTimeout(function(){
         document.getElementById("hideAll").style.display = "none";
-    }, 500);
-}
+    }, 500);*/
 
+    // Refresh site
+    /*
+    setTimeout(function(){
+        window.location.reload(false);
+    }, 2000);
+    */
+
+    // Decision counter
+    //decisionCounter("decision_counter", 10, "/pass");
+
+}
 
 
 /** Change board cards to css **/

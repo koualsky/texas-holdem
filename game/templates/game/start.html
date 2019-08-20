@@ -2,17 +2,21 @@
 
 {% block content %}
 
-<nav>
+<nav class="navbar navbar-dark bg-dark p-0 m-0">
 {% if user.is_authenticated %}
 
-    {{ user }}: {{ request.user.player.money }}$
-    <a href="{% url 'logout' %}">Logout</a>
-    <a href="{% url 'play' %}">Play</a>
+    <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
+    <div class="btn-group">
+        <a href="{% url 'play' %}" class="btn btn-success btn-lg my-0 my-sm-0">Play</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-lg my-0 my-sm-0">Logout</a>
+    </div>
 
 {% else %}
-
-    <a href="{% url 'login' %}">login</a>
-    <a href="{% url 'register' %}">register</a>
+    <a class="navbar-text text-light pl-3" style="cursor: default;"></a>
+    <div class="btn-group">
+        <a href="{% url 'login' %}" class="btn btn-success btn-lg my-0 my-sm-0">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg my-0 my-sm-0">Register</a>
+    </div>
 
 {% endif %}
 </nav>

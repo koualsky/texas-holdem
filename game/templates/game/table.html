@@ -3,6 +3,10 @@
 
 {% block content %}
 
+<!-- To fade effect -->
+<!--<div id="hideAll"></div>-->
+
+<!-- NAV -->
 <nav class="navbar navbar-dark bg-dark p-0 m-0">
 {% if user.is_authenticated %}
 
@@ -14,8 +18,6 @@
 
 {% endif %}
 </nav>
-
-<div id="hideAll"></div>
 
 <!-- POOL -->
 <h3 class="pool text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
@@ -37,6 +39,24 @@
         <td colspan="2" class="align-middle text-right p-0">Board</td>
         <td colspan="3" class="align-middle text-left p-0"><span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span></td>
     </tr>
+
+    <!--
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr class="border border-borderless text-secondary align-middle">
+        <td class="dealer align-middle text-center p-0 border"><small>D</small></td>
+        <td class="name align-middle text-center p-0 border"><small>Name</small>&nbsp;</td>
+        <td class="cards align-middle text-center p-0 align-items-center border">&nbsp;<small>Cards</small></td>
+        <td class="rate align-middle text-center p-0 border"><small>Rate</small></td>
+        <td class="state align-middle text-center p-0 border"><small>State</small></td>
+    </tr>
+    -->
 
     <!-- PLAYERS -->
     {% for player in players_list %}
@@ -101,6 +121,10 @@
               <!-- Show who turn is now -->
               {% if table.decission == player %}
                 {% if request.user.player != player %}
+
+                    <!-- COUNTER -->
+                    <!-- <span id="decision_counter"></span> -->
+
                     <!-- BEFORE: ( ! ) -->
                     <div class="spinner-grow spinner-grow-sm align-middle" role="status">
                         <span class="sr-only">( ! )</span>
