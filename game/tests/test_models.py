@@ -55,7 +55,7 @@ class PlayerModelTest(TestCase):
 
         # Act
         player_result = player.print_pretty_cards_cards()
-        cards_result = Card.print_pretty_cards([Card.new('As'), Card.new('9h')])
+        cards_result = 'A♠9♥'
 
         # Assertion
         self.assertEqual(player_result, cards_result)
@@ -666,7 +666,7 @@ class TableModelTest(TestCase):
 
         # Act
         table = table.print_pretty_cards_on_table()
-        cards_result = Card.print_pretty_cards([Card.new('As'), Card.new('9h')])
+        cards_result = 'A♠9♥'
 
         # Assertion
         self.assertEqual(table, cards_result)
