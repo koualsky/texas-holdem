@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db.models import Q
 from .models import Player, Table
+from django.contrib.auth.hashers import make_password
 
 
 # Game
@@ -63,6 +64,49 @@ def play(request):
                                                'players_list': players_list
                                                }
                   )
+
+
+def play_as_a_guest(request):
+
+    # If my session pk is in db - login
+    try:
+        pk = get_object_or_404(Player, pk=int(request.session['pk']))
+    except:
+        pk = False
+
+    # If player exist, get login data
+    if pk:
+        pk = int(request.session['pk'])
+        player = request.session['guest_username']
+        pwd = request.session['guest_password']
+
+        # Login
+        pla = get_object_or_404(Player, pk=pk)
+        user = User.objects.get(pk=pla.name.pk)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('play')
+        #return HttpResponse(player + ' - ' + pwd)
+
+    # If don't - register
+    else:
+
+        idd = int(Player.objects.latest('pk').pk) + 1
+        username = 'guest_' + str(idd)
+        pwd = make_password('qpwoeiruty1quest' + str(idd))
+        pk = idd
+
+        request.session['guest_username'] = username
+        request.session['guest_password'] = pwd
+        request.session['pk'] = pk
+
+        user = User.objects.create(username=username, password=pwd)
+        Player.objects.create(name=user)
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        return redirect('play')
+        # return redirect('table')
+
 
 
 # Auxiliary methods

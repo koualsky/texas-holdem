@@ -21,6 +21,17 @@
 {% endif %}
 </nav>
 
+
+
+{% if not user.is_authenticated %}
+<div class="text-center">
+    <a href="{% url 'play_as_a_guest' %}" class="play-as-a-guest btn btn-danger btn-lg p-3 pl-5 pr-5 mt-4" id="play-as-a-guest">Play as a guest</a>
+</div>
+{% endif %}
+
+
+
+
 <h2 class="text-center p-4 text-secondary">Top 100</h2>
 
 <div class="top-100-container container p-0 justify-content-center text-secondary">
@@ -34,5 +45,9 @@
     {% endfor %}
     </table>
 </div>
+
+<script>
+    document.getElementById("play-as-a-guest").style.backgroundColor = blue;
+</script>
 
 {% endblock %}

@@ -14,6 +14,10 @@ body {
     max-width: 320px;
 }
 
+.play-as-a-guest {
+    //background-color: pink;
+}
+
 #hideAll {
     position: fixed;
     left: 0px;

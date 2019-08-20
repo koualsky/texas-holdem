@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.start, name='start'),
     path('table/', views.play, name='play'),
     path('exit/', views.exit, name='exit'),
+    path('register_guest/', views.play_as_a_guest, name='play_as_a_guest'),
 
     # Decisions
     path('check/', views.check, name='check'),

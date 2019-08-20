@@ -72,7 +72,6 @@ window.onload = function() {
 
     // Decision counter
     //decisionCounter("decision_counter", 10, "/pass");
-
 }
 
 
