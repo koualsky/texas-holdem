@@ -114,15 +114,13 @@ table tr td.state {
     font-size: 0.8em;
 }
 
-
-
 @media only screen and (min-width: 320px) {
     .game-board {
         max-width: 320px;
         font-size: 1em;
     }
     .pool {
-        font-size: 2em;
+        font-size: 1.8em;
     }
 }
 
@@ -133,7 +131,7 @@ table tr td.state {
         /* display: flex; */ /** This sets up decisions next to game-board **/
     }
     .pool {
-        font-size: 3.5em;
+        font-size: 2.2em;
 
         margin-top: 30px;
         margin-bottom: 30px;

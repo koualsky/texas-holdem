@@ -156,7 +156,7 @@
           </td>
 
           <!-- RATE -->
-          <td class="rate align-middle text-center p-0">{{ player.round_money }}</td>
+          <td class="rate align-middle text-center p-0" id="player_rate">{{ player.round_money }}</td>
 
           <!-- STATE -->
           <td class="state align-middle text-center p-0">
@@ -249,7 +249,7 @@
                         </div>
                     </div>
 
-
+                    <!-- Earlier in range min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" -->
                     <input type="range" class="custom-range form-control-range" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" id="formControlRange">
                 </div>
 
@@ -264,7 +264,7 @@
                 <a href="{% url 'check' %}" class="btn btn-lg btn-success">check</a>
                 <!-- This button shows when you have to add to game pool  -->
             {% else %}
-                <a href="{% url 'check' %}" class="btn btn-lg btn-success">call</a>
+                <a href="{% url 'check' %}" class="btn btn-lg btn-success">{{ table.biggest_rate|subtract:request.user.player.round_money }} call</a>
             {% endif %}
             </span>
 
@@ -277,8 +277,7 @@
             <a href="{% url 'pass' %}" class="btn btn-lg btn-danger">pass</a>
         {% endif %}
     {% endif %}
-{% endfor %}
-</div>
+{% endfor %}</div>
 
 </div>
 

@@ -132,20 +132,23 @@ try {
     var check_call_buttons = document.getElementById("check_call_buttons").innerHTML;
     var raise_button = '<button type="submit" class="btn btn-lg btn-warning">raise</button>';
     var player_money = parseInt(document.getElementById("player_money").innerHTML);
+    var player_rate = parseInt(document.getElementById("player_rate").innerHTML);
     var pool = parseInt(document.getElementById("pool").innerHTML);
 
     // Input range functionality
     document.getElementById("formControlRange").oninput = function() {
 
-        // Change text input and player money value if I drag range
+        // Change text input and player money and player rate value if I drag range
         var new_value = parseInt(document.getElementById("formControlRange").value);
         document.getElementById("how_much").value = new_value;
         document.getElementById("player_money").innerHTML = (player_money - new_value);
+        document.getElementById("player_rate").innerHTML = (player_rate + new_value);
         document.getElementById("pool").innerHTML = (pool + new_value);
 
         // Change button to 'Raise' if value in range > 0
         if (new_value > 0) {
-            document.getElementById("raise_button").innerHTML = raise_button;
+            //document.getElementById("raise_button").innerHTML = raise_button;
+            document.getElementById("raise_button").innerHTML = '<button type="submit" class="btn btn-lg btn-warning">' + new_value + ' raise</button>';
             document.getElementById("check_call_buttons").innerHTML = "";
         }
 
