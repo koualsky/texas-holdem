@@ -1,5 +1,17 @@
 body {
-    background: #eee;
+    background: #ddd;
+}
+
+.navbar {
+    height: 3em;
+}
+
+.progress {
+    cursor: default;
+}
+
+.btn-group {
+    padding-right: 0.25em;
 }
 
 .login-form {
@@ -14,8 +26,15 @@ body {
     max-width: 320px;
 }
 
-.play-as-a-guest {
-    //background-color: pink;
+.play-as-a-guest-div {
+    padding-left: 0.25em;
+}
+
+.play-as-a-guest-button {
+    /*
+    transition: background-color 1s cubic-bezier(1, 1, 1, 1);
+	transition-delay: 0s;
+	border: 0px; */
 }
 
 #hideAll {

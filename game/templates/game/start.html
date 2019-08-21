@@ -7,34 +7,33 @@
 
     <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
     <div class="btn-group">
-        <a href="{% url 'play' %}" class="btn btn-success btn-lg my-0 my-sm-0">Play</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger btn-lg my-0 my-sm-0">Logout</a>
+        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0">Play</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger my-0 my-sm-0">Logout</a>
     </div>
 
 {% else %}
-    <a class="navbar-text text-light pl-3" style="cursor: default;"></a>
+    <!-- <a class="navbar-text text-light pl-3" style="cursor: default;"></a> -->
+
+    <!-- PLAY AS A GUEST BUTTON -->
+    {% if not user.is_authenticated %}
+    <div class="play-as-a-guest-div text-center">
+        <a href="{% url 'play_as_a_guest' %}" class="play-as-a-guest-button btn btn-danger pl-4 pr-4" id="play-as-a-guest-button">Play as a guest</a>
+    </div>
+    {% endif %}
+
     <div class="btn-group">
-        <a href="{% url 'login' %}" class="btn btn-success btn-lg my-0 my-sm-0">Login</a>
-        <a href="{% url 'register' %}" class="btn btn-primary btn-lg my-0 my-sm-0">Register</a>
+        <a href="{% url 'login' %}" class="btn btn-success my-0 my-sm-0">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-primary my-0 my-sm-0">Register</a>
     </div>
 
 {% endif %}
 </nav>
 
-
-
-{% if not user.is_authenticated %}
-<div class="text-center">
-    <a href="{% url 'play_as_a_guest' %}" class="play-as-a-guest btn btn-danger btn-lg p-3 pl-5 pr-5 mt-4" id="play-as-a-guest">Play as a guest</a>
-</div>
-{% endif %}
-
-
-
-
-<h2 class="text-center p-4 text-secondary">Top 100</h2>
-
 <div class="top-100-container container p-0 justify-content-center text-secondary">
+
+        <h2 class="text-center p-4 text-secondary">Top 100</h2>
+
+    <!-- TOP 100 TABLE -->
     <table class="table border container p-0 m-0">
     {% for player in best_players %}
         <tr>

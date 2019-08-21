@@ -12,20 +12,78 @@
 
     <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
     <div class="btn-group">
-        <a href="{% url 'play' %}" class="btn btn-success btn-lg my-0 my-sm-0">Refresh</a>
-        <a href="{% url 'exit' %}" class="btn btn-danger btn-lg my-0 my-sm-0">Exit game</a>
+        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0">Refresh</a>
+        <a href="{% url 'exit' %}" class="btn btn-danger my-0 my-sm-0">Exit game</a>
     </div>
 
 {% endif %}
 </nav>
 
+<!-- GAME STATUS -->
+<div class="progress">
+  {% if table.game_state == 'ready' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">Ready</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">1</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'small_blind' or table.game_state == 'big_blind' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">1</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_2' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_3' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_1' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'give_1_again' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">Last bidding</div>
+    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+  {% endif %}
+
+  {% if table.game_state == 'winner' %}
+    <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Winner!</div>
+  {% endif %}
+</div>
+
+<!-- SHOW WINNER -->
+{% if table.game_state == 'winner' %}
+    <div class="modal-body text-center">
+        The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'check' %}" class="btn btn-success btn-lg my-0 my-sm-0">Play again</a>
+    </div>
+{% endif %}
+
 <!-- POOL -->
 <h3 class="pool text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
-
-
-
-
-
 
 <!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
 <div class="game-board container p-0 rounded justify-content-center">
@@ -39,24 +97,6 @@
         <td colspan="2" class="align-middle text-right p-0">Board</td>
         <td colspan="3" class="align-middle text-left p-0"><span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span></td>
     </tr>
-
-    <!--
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-
-    <tr class="border border-borderless text-secondary align-middle">
-        <td class="dealer align-middle text-center p-0 border"><small>D</small></td>
-        <td class="name align-middle text-center p-0 border"><small>Name</small>&nbsp;</td>
-        <td class="cards align-middle text-center p-0 align-items-center border">&nbsp;<small>Cards</small></td>
-        <td class="rate align-middle text-center p-0 border"><small>Rate</small></td>
-        <td class="state align-middle text-center p-0 border"><small>State</small></td>
-    </tr>
-    -->
 
     <!-- PLAYERS -->
     {% for player in players_list %}
@@ -239,40 +279,4 @@
 
 </div>
 
-
-
-
-
-<!-- Hide line below until game state achieve 'winner' state -->
-{% if request.user.player.table.game_state == 'winner' %}
-
-<!-- Modal -->
-<div id="myModal" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-
-      <div class="modal-body text-center">
-          The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
-      </div>
-      <div class="modal-footer text-center">
-        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script type="text/javascript">
-    $(window).on('load', function(){
-        $('#myModal').modal('show')
-    });
-</script>
-
-<div class="text-center p-4">
-    <a href="{% url 'check' %}" class="btn btn-success btn-lg my-0 my-sm-0">Play again</a>
-</div>
-
-{% endif %}
-
 {% endblock %}
-

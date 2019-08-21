@@ -1,5 +1,24 @@
 /** Additional functions **/
 
+//** Play as a guest - blinking button **//
+/*
+var colors = ["red", "orange"];
+var currentIndex = 0;
+
+setInterval(function() {
+	document.getElementById("play-as-a-guest-button").style = "background-color: " + colors[currentIndex];
+	currentIndex++;
+	if (currentIndex == undefined || currentIndex >= colors.length) {
+		currentIndex = 0;
+	}
+}, 1000);
+*/
+
+
+
+
+
+
 // Counter then redirect
 /*
 function decisionCounter(id, seconds, url) {
