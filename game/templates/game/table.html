@@ -82,19 +82,22 @@
     </div>
 {% endif %}
 
-<!-- POOL -->
-<h3 class="pool text-center text-secondary pb-2 pt-3">Pool: <span id="pool">{{ table.pool }}</span> $</h3>
-
 <!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
 <div class="game-board container p-0 rounded justify-content-center">
 
 <!-- GAME TABLE (table-bordered) -->
-<table class="table table-border border rounded-lg container p-0 m-0 mb-4">
+<table class="table table-borderless rounded-lg container p-0 m-0 mb-4">
   <tbody>
+
+    <!-- POOL -->
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="3" class="pl-1"><h5 class="pool text-secondary">Pool: <span id="pool">{{ table.pool }}</span> $</h5></td>
+    </tr>
 
     <!-- BOARD -->
     <tr>
-        <td colspan="2" class="align-middle text-right p-0">Board</td>
+        <td colspan="2" class="board align-middle text-right p-0">Board</td>
         <td colspan="3" class="align-middle text-left p-0"><span class="d-flex" id="board_cards">{{ table.print_pretty_cards_on_table }}</span></td>
     </tr>
 
@@ -112,7 +115,7 @@
         {% endif %}
 
           <!-- DEALER -->
-          <td class="dealer align-middle text-center p-0">
+          <td class="dealer align-middle text-right p-0">
               {% if table.game_state != 'ready' and table.dealer == player %} <span class="badge badge-pill badge-dark text-warning">D</span> {% endif %}
               <!--{% if table.game_state != 'ready' and table.small_blind == player %} <span class="badge badge-pill badge-warning">S</span> {% endif %}
               {% if table.game_state != 'ready' and table.big_blind == player %} <span class="badge badge-pill badge-warning">B</span> {% endif %}-->
@@ -136,7 +139,7 @@
 
                     <!-- Player is me: print my cards -->
                     {% if player == request.user.player %}
-                        <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span>{{ player.my_hand }}
+              <span class="d-flex" id="player_cards_{{ forloop.counter }}">{{ player.print_pretty_cards_cards }}</span><span class="my-hand">{{ player.my_hand }}</span>
 
                     <!-- Player is not me: print blank cards-->
                     {% elif table.game_state != 'ready' and table.game_state != 'small_blind' and table.game_state != 'big_blind' %}
@@ -185,25 +188,25 @@
         <tr style="color: #d9d9d9;">
 
           <!-- DEALER -->
-          <td class="align-middle text-center p-0" style="width: 12.5%;">
+          <td class="dealer align-middle text-center p-0" style="width: 12.5%;">
               {% if table.game_state != 'ready' and table.dealer == player %} D {% endif %}
               {% if table.game_state != 'ready' and table.small_blind == player %} s {% endif %}
               {% if table.game_state != 'ready' and table.big_blind == player %} b {% endif %}
           </td>
 
           <!-- NAME & MONEY -->
-          <td class="align-middle text-right p-0" style="width: 31.25%; max-width: 31.25%;">
+          <td class="name align-middle text-right p-0" style="width: 31.25%; max-width: 31.25%;">
               {{ player }}<br /><sup>{{ player.money }} $</sup>
           </td>
 
           <!-- CARDS -->
-          <td class="align-middle text-left p-0 d-flex align-items-center" style="cursor: default;"></td>
+          <td class="cards align-middle text-left p-0 d-flex align-items-center" style="cursor: default;"></td>
 
           <!-- RATE -->
-          <td class="align-middle text-center p-0" style="width: 12.5%;"></td>
+          <td class="rate align-middle text-center p-0" style="width: 12.5%;"></td>
 
           <!-- STATE -->
-          <td class="align-middle text-left p-0" style="width: 15.625%;">{{ player.state }}</td>
+          <td class="state align-middle text-left p-0" style="width: 15.625%;">{{ player.state }}</td>
         </tr>
         {% endif %}
     {% endfor %}
@@ -240,8 +243,8 @@
                 <div class="form-group p-1 text-center">
 
                     <div class="input-group text-center">
-                        <input class="form-control text-center" id="how_much" name="how_much" type="number" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}">
-                        <div class="input-group-append">
+                        <input class="form-control text-center" style="display: none;" id="how_much" name="how_much" type="number" value="{{ table.biggest_rate|subtract:request.user.player.round_money }}" min="{{ table.biggest_rate|subtract:request.user.player.round_money }}" max="{{ request.user.player.money }}">
+                        <div class="input-group-append" style="display: none;">
                             <span class="input-group-text" id="basic-addon2">$</span>
                         </div>
                     </div>

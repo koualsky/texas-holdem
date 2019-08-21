@@ -1,5 +1,5 @@
 body {
-    background: #ddd;
+    background: #eee;
 }
 
 .navbar {
@@ -80,6 +80,10 @@ table tr td.state {
     width: 15.625%;
 }
 
+.board {
+    font-size: 0.8em;
+}
+
 .card {
     width: 2em;
     height: 3em;
@@ -88,6 +92,26 @@ table tr td.state {
 .game-board {
     max-width: 320px;
     font-size: 1em;
+}
+
+.dealer {
+    font-size: 0.7em;
+}
+
+.name {
+    font-size: 0.8em;
+}
+
+.my-hand {
+    font-size: 0.8em;
+}
+
+.rate {
+    font-size: 0.8em;
+}
+
+.state {
+    font-size: 0.8em;
 }
 
 
@@ -106,7 +130,7 @@ table tr td.state {
     .game-board {
         max-width: 768px;
         font-size: 1.8em;
-        display: flex; /** This sets up decisions next to game-board **/
+        /* display: flex; */ /** This sets up decisions next to game-board **/
     }
     .pool {
         font-size: 3.5em;
