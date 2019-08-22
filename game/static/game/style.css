@@ -114,6 +114,10 @@ table tr td.state {
     font-size: 0.8em;
 }
 
+.info-for-out-players {
+    font-size: 0.8em;
+}
+
 @media only screen and (min-width: 320px) {
     .game-board {
         max-width: 320px;

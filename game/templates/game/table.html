@@ -71,8 +71,15 @@
   {% endif %}
 </div>
 
+<!-- INFO FOR OUT PLAYERS IF GAME IS ON AIR -->
+{% if table.how_many_players <= 1 %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3">The game was begin if one more player joins to you...</p>
+{% elif table.game_state != ready and request.user.player.state == 'out' %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3">You will join the game when this round ends</p>
+{% endif %}
+
 <!-- SHOW WINNER -->
-{% if table.game_state == 'winner' %}
+{% if table.game_state == 'winner' and request.user.player.state != 'out' %}
     <div class="modal-body text-center">
         The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
     </div>
