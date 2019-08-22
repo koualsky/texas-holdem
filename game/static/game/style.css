@@ -140,4 +140,7 @@ table tr td.state {
         margin-top: 30px;
         margin-bottom: 30px;
     }
+    .info-for-out-players {
+        font-size: 1.6em;
+    }
 }

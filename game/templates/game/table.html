@@ -23,47 +23,47 @@
 <div class="progress">
   {% if table.game_state == 'ready' %}
     <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">Ready</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">1</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">1</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
   {% endif %}
 
   {% if table.game_state == 'small_blind' or table.game_state == 'big_blind' %}
     <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">1</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">2</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
   {% endif %}
 
   {% if table.game_state == 'give_2' %}
     <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">2</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">3</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
   {% endif %}
 
   {% if table.game_state == 'give_3' %}
     <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">3</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">4</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
   {% endif %}
 
   {% if table.game_state == 'give_1' %}
     <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100">4</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Last bidding!</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
   {% endif %}
 
   {% if table.game_state == 'give_1_again' %}
     <div class="progress-bar progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">Last bidding</div>
-    <div class="progress-bar bg-secondary text-dark" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
+    <div class="progress-bar bg-secondary text-dark border-left" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Winner</div>
   {% endif %}
 
   {% if table.game_state == 'winner' %}
@@ -79,7 +79,7 @@
 {% endif %}
 
 <!-- SHOW WINNER -->
-{% if table.game_state == 'winner' and request.user.player.state != 'out' %}
+{% if table.game_state == 'winner' and request.user.player.state != 'out' and request.user.player.state != 'check' %}
     <div class="modal-body text-center">
         The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
     </div>
@@ -87,6 +87,8 @@
     <div class="text-center">
         <a href="{% url 'check' %}" class="btn btn-success btn-lg my-0 my-sm-0">Play again</a>
     </div>
+{% elif table.game_state == 'winner' and request.user.player.state == 'check' %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3 m-0">Wait for other player's decision</p>
 {% endif %}
 
 <!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
