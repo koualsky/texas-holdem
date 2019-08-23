@@ -7,7 +7,7 @@
 
     <a class="navbar-text text-light pl-3" style="cursor: default;">{{ user }}: <span id="player_money">{{ request.user.player.money }}</span> $</a>
     <div class="btn-group">
-        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0">Play</a>
+        <a href="{% url 'play' %}" class="btn btn-success my-0 my-sm-0" onclick="refreshuj()">Play</a>
         <a href="{% url 'logout' %}" class="btn btn-danger my-0 my-sm-0">Logout</a>
     </div>
 

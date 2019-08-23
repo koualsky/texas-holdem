@@ -148,7 +148,7 @@ try {
         // Change button to 'Raise' if value in range > 0
         if (new_value > 0) {
             //document.getElementById("raise_button").innerHTML = raise_button;
-            document.getElementById("raise_button").innerHTML = '<button type="submit" class="btn btn-lg btn-warning">' + new_value + ' raise</button>';
+            document.getElementById("raise_button").innerHTML = '<button type="submit" class="btn btn-lg btn-warning" onclick="refreshuj()">' + new_value + ' raise</button>';
             document.getElementById("check_call_buttons").innerHTML = "";
         }
 

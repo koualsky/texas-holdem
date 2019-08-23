@@ -78,6 +78,7 @@ table tr td.rate {
 
 table tr td.state {
     width: 15.625%;
+    min-width: 15.625%;
 }
 
 .board {
