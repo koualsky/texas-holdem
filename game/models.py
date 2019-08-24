@@ -696,7 +696,7 @@ class Table(models.Model):  # Game
         scores_list = []
 
         # 3. Get cards from each player and convert them to list of integers
-        if self.player1 is not None and self.player1.state != 'out':
+        if self.player1 is not None and self.player1.state != 'out' and self.player1.state != 'pass':
             player1_cards = \
                 self.convert_from_string_to_list(self.player1.cards)
             player1_cards = list(map(int, player1_cards))
@@ -704,7 +704,7 @@ class Table(models.Model):  # Game
             scores_list.append(player1_score)
         else:
             player1_score = 0
-        if self.player2 is not None and self.player2.state != 'out':
+        if self.player2 is not None and self.player2.state != 'out' and self.player2.state != 'pass':
             player2_cards = \
                 self.convert_from_string_to_list(self.player2.cards)
             player2_cards = list(map(int, player2_cards))
@@ -712,7 +712,7 @@ class Table(models.Model):  # Game
             scores_list.append(player2_score)
         else:
             player2_score = 0
-        if self.player3 is not None and self.player3.state != 'out':
+        if self.player3 is not None and self.player3.state != 'out' and self.player3.state != 'pass':
             player3_cards = \
                 self.convert_from_string_to_list(self.player3.cards)
             player3_cards = list(map(int, player3_cards))
@@ -720,7 +720,7 @@ class Table(models.Model):  # Game
             scores_list.append(player3_score)
         else:
             player3_score = 0
-        if self.player4 is not None and self.player4.state != 'out':
+        if self.player4 is not None and self.player4.state != 'out' and self.player4.state != 'pass':
             player4_cards = \
                 self.convert_from_string_to_list(self.player4.cards)
             player4_cards = list(map(int, player4_cards))

@@ -79,16 +79,17 @@
 {% endif %}
 
 <!-- SHOW WINNER -->
-{% if table.game_state == 'winner' and request.user.player.state != 'out' and request.user.player.state != 'check' %}
+{% if table.game_state == 'winner' and request.user.player.state != 'out' %}
     <div class="modal-body text-center">
         The winner is <strong>{{ table.the_winner }}</strong> with <strong>{{ table.the_winner.my_hand }}</strong>
     </div>
 
     <div class="text-center">
         <a href="{% url 'check' %}" class="btn btn-success btn-lg my-0 my-sm-0" onclick="refreshuj()">Play again</a>
+        <a href="{% url 'pass' %}" class="btn btn-danger btn-lg my-0 my-sm-0" onclick="refreshuj()" id="pass_button" style="display: none;">Pass</a>
     </div>
-{% elif table.game_state == 'winner' and request.user.player.state == 'check' %}
-    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3 m-0">Wait for other player's decision</p>
+<!--{% elif table.game_state == 'winner' and request.user.player.state == 'check' %}
+    <p class="info-for-out-players text-center text-danger pt-3 pl-3 pr-3 m-0">Wait for other player's decision</p>-->
 {% endif %}
 
 <!-- 1. ALL PLAY SCREEN: BOARD AND PLAYERS CARDS -->
@@ -210,9 +211,10 @@
                   <!-- <span id="decision_counter"></span-->
 
                   <!-- BEFORE: ( ! ) -->
+                  <!--
                   <div class="spinner-grow spinner-grow-sm align-middle" role="status">
                       <span class="sr-only">( ! )</span>
-                  </div>
+                  </div>-->
                   <span class="align-middle" id="counter"></span>
               <!-- If you aren't you, show him status -->
               {% else %}
@@ -342,12 +344,10 @@
 
 
 
-
+<p style="display: none;">game state: <span id="game_state">{{ table.game_state }}</span></p>
 <p style="display: none;">who decide: <span id="who_decide">{{ table.decission }}</span></p>
 <p style="display: none;">who am i: <span id="who_am_i">{{ request.user.player }}</span></p>
 <p style="display: none;">table pk for js: <span id="table_pk"></span></p>
-<!--<input id="chat-message-input" type="text" size="30"/>
-<input id="chat-message-submit" type="button" value="Send"/>-->
 
 <script>
     // BEEP SOUND
@@ -355,7 +355,6 @@
     function beep() {
         audio.play();
     }
-
 
     // SET ROOM_PK FROM TABLE PK
     var room_pk = {{ table.pk }};
@@ -374,7 +373,9 @@
         var message = data['message'];
         setTimeout(function(){
             document.getElementById("counter").innerHTML = message;
-            if (message == 'end') { document.getElementById('refresh').click(); };
+            if (message == 'end') {
+                document.getElementById('refresh').click();
+                };
         }, 300);
     };
 
@@ -390,7 +391,7 @@
             'message': message
         }));
         setTimeout(function(){
-            document.getElementById('refresh').click()
+            document.getElementById('refresh').click();
         }, 500);
     };
 
@@ -411,6 +412,17 @@
                 clearInterval(refreshIntervalId);
                 document.getElementById("pass_button").click();
             };
+        }, 1000);
+    }
+
+    // REFRESH SITE EVERY 2 SECONDS IF ONLY 1 PLAYER IS ON THE TABLE
+    var game_state = document.getElementById("game_state").innerHTML;
+    if ({{ table.how_many_players }} < 2 /*|| game_state == 'winner' */|| game_state == 'ready') {
+        var startrefresh = setInterval(function(){
+            if ({{ table.how_many_players }} > 1) {
+                clearInterval(startrefresh);
+            }
+            document.getElementById('refresh').click();
         }, 1000);
     }
 

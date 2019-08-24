@@ -6,14 +6,20 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from .models import Player, Table
 from django.contrib.auth.hashers import make_password
+from django.views.generic.list import ListView
+from django.utils import timezone
+
+
+# Start
+class StartListView(ListView):
+    model = Player
+    paginate_by = 20
+    context_object_name = 'best_players'
+    ordering = '-money'
+    template_name = 'game/start.html'
 
 
 # Game
-def start(request):
-    best_players = Player.objects.all().order_by('-money')[:100]
-    return render(request, 'game/start.html', { 'best_players': best_players })
-
-
 @login_required
 def play(request):
     """
@@ -206,7 +212,7 @@ def exit(request):
         table.save()
 
     # 4. If after my leaving in table stay 0 players
-    # - set None to 'dealer, 'small_blind', 'big_blind', deck, cards_on_table
+    # - set None to 'dealer, 'small_blind', 'big_blind', deck, cards_on_table, decission
     # fields in Table
     if table.how_many_players() < 1:
         table.dealer = None
@@ -214,6 +220,7 @@ def exit(request):
         table.big_blind = None
         table.deck = None
         table.cards_on_table = None
+        table.decission = None
         table.save()
 
     # 5. Remove Table and cards from my profile

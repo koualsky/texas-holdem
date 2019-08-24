@@ -73,12 +73,13 @@ table tr td.cards {
 }
 
 table tr td.rate {
-    width: 12.5%;
+    width: 30px;
+    max-width: 30px;
 }
 
 table tr td.state {
-    width: 15.625%;
-    min-width: 15.625%;
+    width: 40px;
+    max-width: 40px;
 }
 
 .board {

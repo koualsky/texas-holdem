@@ -127,7 +127,6 @@ if (board_cards.length > 0) {
 
 
 /** Range functionality **/
-
 try {
     var check_call_buttons = document.getElementById("check_call_buttons").innerHTML;
     var raise_button = '<button type="submit" class="btn btn-lg btn-warning">raise</button>';

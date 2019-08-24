@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
 
     # Game
-    path('', views.start, name='start'),
+    path('', views.StartListView.as_view(), name='start'),
     path('table/', views.play, name='play'),
     path('exit/', views.exit, name='exit'),
     path('register_guest/', views.play_as_a_guest, name='play_as_a_guest'),
