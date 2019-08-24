@@ -31,15 +31,15 @@
 
 <div class="top-100-container container p-0 justify-content-center text-secondary">
 
-        <h2 class="text-center p-4 text-secondary">Top 20</h2>
+        <h2 class="text-center p-4 text-secondary" style="cursor: default;">Top 20</h2>
 
     <!-- TOP 100 TABLE -->
-    <table class="table border container p-0 m-0">
+    <table class="table table-borderless container p-0 m-0">
     {% for player in best_players %}
         <tr>
-            <td class="align-middle text-right text-secondary">{{ forloop.counter }}</td>
-            <td class="align-middle text-right text-secondary">{{ player }}</td>
-            <td class="align-middle text-left text-secondary">{{ player.money }} $</td>
+            <td class="align-middle text-right text-secondary p-1 m-0" style="width: 2em;">{{ forloop.counter }}</td>
+            <td class="align-middle text-right text-secondary p-1 m-0">{{ player }}</td>
+            <td class="align-middle text-right text-secondary p-1 m-0" style="width: 4em;">{{ player.money }} $</td>
         </tr>
     {% endfor %}
     </table>
