@@ -7,4 +7,11 @@ You don't want to register? No problem, 'Play as a guest'.
 
 Responsible.
 
-For channels: docker run -p 6379:6379 -d redis:2.8
+HOW TO RUN:
+virtualenv venv
+cd venv/scripts
+activate
+pip install -r requirements.txt
+python manage.py migrate
+docker run -p 6379:6379 -d redis:2.8
+python manage.py runserver
