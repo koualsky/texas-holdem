@@ -1,6 +1,6 @@
 # Texas Hold'em Poker
 
-![logo](https://rawcdn.githack.com/koualsky/texas-holdem/master/logo.png)
+![logo](https://rawcdn.githack.com/koualsky/texas-holdem/develop/logo.png)
 
 App allows to play online in texas holdem poker with other players.  
 Project maked by: python, django, html, bootstrap, js, sql, 
