@@ -141,7 +141,7 @@ try {
         var new_value = parseInt(document.getElementById("formControlRange").value);
         document.getElementById("how_much").value = new_value;
         document.getElementById("player_money").innerHTML = (player_money - new_value);
-        document.getElementById("player_rate").innerHTML = (player_rate + new_value);
+        // document.getElementById("player_rate").innerHTML = (player_rate + new_value);
         document.getElementById("pool").innerHTML = (pool + new_value);
 
         // Change button to 'Raise' if value in range > 0

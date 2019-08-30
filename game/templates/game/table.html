@@ -397,7 +397,7 @@
 
     // COUNTER FOR NON DECISION ONLY FOR PLAYER WHOSE ROUND IS
     if (who_decide == who_am_i) {
-        var start = 15;
+        var start = 30;
         var refreshIntervalId = setInterval(function(){
             start -= 1;
             document.getElementById("counter").innerHTML = start;
@@ -415,7 +415,7 @@
         }, 1000);
     }
 
-    // REFRESH SITE EVERY 2 SECONDS IF ONLY 1 PLAYER IS ON THE TABLE
+    // REFRESH SITE EVERY 5 SECONDS IF ONLY 1 PLAYER IS ON THE TABLE
     var game_state = document.getElementById("game_state").innerHTML;
     if ({{ table.how_many_players }} < 2 /*|| game_state == 'winner' */|| game_state == 'ready') {
         var startrefresh = setInterval(function(){
@@ -423,7 +423,7 @@
                 clearInterval(startrefresh);
             }
             document.getElementById('refresh').click();
-        }, 1000);
+        }, 5000);
     }
 
 </script>
